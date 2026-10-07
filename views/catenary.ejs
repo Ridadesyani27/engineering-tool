@@ -181,9 +181,11 @@
   }
 
   function parsePositiveValues(text, label, emptyLabel) {
-    const values = String(text || '').split(';')
+    const parts = String(text || '').split(';')
       .map(part => part.trim())
-      .filter(Boolean)
+      .filter(Boolean);
+    if (parts.length > 50) throw new Error(`${label} must contain at most 50 values.`);
+    const values = parts
       .map(part => {
         const value = Number(part.replace(',', '.'));
         if (!Number.isFinite(value)) throw new Error(`${label} must be numbers separated by semicolons only.`);
@@ -195,9 +197,11 @@
   }
 
   function parseNumericValues(text, label, emptyLabel) {
-    const values = String(text || '').split(';')
+    const parts = String(text || '').split(';')
       .map(part => part.trim())
-      .filter(Boolean)
+      .filter(Boolean);
+    if (parts.length > 50) throw new Error(`${label} must contain at most 50 values.`);
+    const values = parts
       .map(part => {
         const value = Number(part.replace(',', '.'));
         if (!Number.isFinite(value)) throw new Error(`${label} must be numbers separated by semicolons only. Use either a comma or a dot for decimals.`);

@@ -483,11 +483,11 @@ const activeTab = ['project', 'vessel', 'cable', 'results', 'graphs', 'details']
 
 <script>
 const form = document.querySelector('.calc-form');
-const projectState = <%- JSON.stringify(input) %>;
-const carouselGraphData = <%- JSON.stringify(graphData) %>;
-const carouselCableColors = <%- JSON.stringify(cableColorMap) %>;
-const carouselPartitions = <%- JSON.stringify(partitions) %>;
-const carouselSubmitted = <%- JSON.stringify(submitted) %>;
+const projectState = <%- JSON.stringify(input).replace(/</g, '\\u003c') %>;
+const carouselGraphData = <%- JSON.stringify(graphData).replace(/</g, '\\u003c') %>;
+const carouselCableColors = <%- JSON.stringify(cableColorMap).replace(/</g, '\\u003c') %>;
+const carouselPartitions = <%- JSON.stringify(partitions).replace(/</g, '\\u003c') %>;
+const carouselSubmitted = <%- JSON.stringify(submitted).replace(/</g, '\\u003c') %>;
 const carouselResultSnapshot = <%- JSON.stringify({
   summary: result.summary,
   crushSummary: result.crushSummary,
@@ -495,7 +495,7 @@ const carouselResultSnapshot = <%- JSON.stringify({
   wrapRows: result.wrapRows,
   errors: result.errors,
   graphData
-}) %>;
+}).replace(/</g, '\\u003c') %>;
 
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, char => ({

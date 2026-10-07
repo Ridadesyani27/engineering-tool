@@ -82,3 +82,16 @@ test('an unreachable geometry fails loudly rather than returning nonsense', () =
   assert.throws(() => calculateCatenary({ ...base, layback: 1e7, waterDepth: 0.001, chuteHeight: 0 }),
     /valid catenary|solution/i);
 });
+
+test('each catenary series accepts 50 values and rejects oversized submissions before solving', () => {
+  for (const [field, start] of [['layback', 25], ['waterDepthLat', 30], ['waterLevel', 0]]) {
+    const values = Array.from({ length: 50 }, (_, i) => start + i / 10);
+    const result = calculateCatenary(readReportInputs({ [field]: values.join(';') }));
+    assert.strictEqual(result.profiles.length, 50, field);
+    for (const count of [51, 10000]) {
+      assert.throws(() => calculateCatenary(readReportInputs({
+        [field]: Array(count).fill(start).join(';')
+      })), /at most 50 values/, `${field}: duplicates must not bypass the limit`);
+    }
+  }
+});

@@ -187,7 +187,7 @@ const fields = {
 let history = [];
 let historyIndex = -1;
 let latestResult = null;
-const initialReportError = <%- JSON.stringify(reportError || '') %>;
+const initialReportError = <%- JSON.stringify(reportError || '').replace(/</g, '\\u003c') %>;
 
 function readNumber(field) {
   return Number.parseFloat(field.value);
