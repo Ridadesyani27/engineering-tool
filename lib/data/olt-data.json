@@ -1,0 +1,1023 @@
+{
+  "twf": 6,
+  "operations": [
+    {
+      "name": "Mobilisation / Demobilisation CLV",
+      "subOperations": [
+        {
+          "name": "Mobilisation / Demobilisation CLV",
+          "primary": {
+            "tPop": 47,
+            "tC": 1,
+            "tR": 48
+          },
+          "strip": {
+            "tPop": null,
+            "tC": null,
+            "tR": null
+          },
+          "variables": [
+            {
+              "name": "Hs",
+              "designLimit": "-",
+              "unit": "[m]"
+            },
+            {
+              "name": "Wind",
+              "designLimit": 14,
+              "unit": "[m/s]"
+            },
+            {
+              "name": "Current",
+              "designLimit": "-",
+              "unit": "[knts]"
+            }
+          ],
+          "comment": "- Sheltered quayside\n- Wind speed is limited by quayside/vessel crane if used\n- Can be abandoned at any time, in harbour condition",
+          "timeToAbandon": "-"
+        }
+      ]
+    },
+    {
+      "name": "Cable Loading",
+      "subOperations": [
+        {
+          "name": "Cable Loading",
+          "primary": {
+            "tPop": 36,
+            "tC": 6,
+            "tR": 42
+          },
+          "strip": {
+            "tPop": null,
+            "tC": null,
+            "tR": null
+          },
+          "variables": [
+            {
+              "name": "Hs",
+              "designLimit": "-",
+              "unit": "[m]"
+            },
+            {
+              "name": "Wind",
+              "designLimit": 14,
+              "unit": "[m/s]"
+            },
+            {
+              "name": "Current",
+              "designLimit": "-",
+              "unit": "[knts]"
+            }
+          ],
+          "comment": "- Sheltered quayside\n- Wind speed is limited by quayside/vessel crane if used\n- Can be abandoned at any time, in harbour condition",
+          "timeToAbandon": "-"
+        }
+      ]
+    },
+    {
+      "name": "Transit",
+      "subOperations": [
+        {
+          "name": "Vessel Transit",
+          "primary": {
+            "tPop": 24,
+            "tC": 6,
+            "tR": 30
+          },
+          "strip": {
+            "tPop": null,
+            "tC": null,
+            "tR": null
+          },
+          "variables": [
+            {
+              "name": "Hs",
+              "designLimit": 2.5,
+              "unit": "[m]"
+            },
+            {
+              "name": "Wind",
+              "designLimit": 17.5,
+              "unit": "[m/s]"
+            },
+            {
+              "name": "Current",
+              "designLimit": 2.5,
+              "unit": "[knts]"
+            }
+          ],
+          "comment": "- Time to abandon is the distance to ports of refuge",
+          "timeToAbandon": 6
+        },
+        {
+          "name": "Transit to 500m zone",
+          "primary": {
+            "tPop": 3,
+            "tC": 1,
+            "tR": 4
+          },
+          "strip": {
+            "tPop": null,
+            "tC": null,
+            "tR": null
+          },
+          "variables": [
+            {
+              "name": "Hs",
+              "designLimit": 2.5,
+              "unit": "[m]"
+            },
+            {
+              "name": "Wind",
+              "designLimit": 17.5,
+              "unit": "[m/s]"
+            },
+            {
+              "name": "Current",
+              "designLimit": 2.5,
+              "unit": "[knts]"
+            }
+          ],
+          "comment": null,
+          "timeToAbandon": 0.5
+        }
+      ]
+    },
+    {
+      "name": "Crew Transfer",
+      "subOperations": [
+        {
+          "name": "Crew Transfer (CTV) - \nTransfer To/From Platforms or Vessel",
+          "primary": {
+            "tPop": 1,
+            "tC": 1,
+            "tR": 2
+          },
+          "strip": {
+            "tPop": null,
+            "tC": null,
+            "tR": null
+          },
+          "variables": [
+            {
+              "name": "Hs",
+              "designLimit": 1.5,
+              "unit": "[m]"
+            },
+            {
+              "name": "Wind",
+              "designLimit": 14,
+              "unit": "[m/s]"
+            },
+            {
+              "name": "Current",
+              "designLimit": 2.5,
+              "unit": "[knts]"
+            }
+          ],
+          "comment": "- Safe transfer limit is at CTV masters discretion 1.4 - 1.5m",
+          "timeToAbandon": 0.5
+        }
+      ]
+    },
+    {
+      "name": "Burial/De-burial",
+      "subOperations": [
+        {
+          "name": "Burial/De-burial (incl. Tool Launch and Recovery)",
+          "primary": {
+            "tPop": 6,
+            "tC": 3,
+            "tR": 9
+          },
+          "strip": {
+            "tPop": null,
+            "tC": null,
+            "tR": null
+          },
+          "variables": [
+            {
+              "name": "Hs lower limit",
+              "designLimit": 1.5,
+              "unit": "[m]"
+            },
+            {
+              "name": "Hs upper limit",
+              "designLimit": 2,
+              "unit": "[m]"
+            },
+            {
+              "name": "Wind",
+              "designLimit": 14,
+              "unit": "[m/s]"
+            },
+            {
+              "name": "Current",
+              "designLimit": 1.5,
+              "unit": "[knts]"
+            }
+          ],
+          "comment": "- Subject to equipment operator discretion",
+          "timeToAbandon": 1
+        }
+      ]
+    },
+    {
+      "name": "ROV Operation",
+      "subOperations": [
+        {
+          "name": "ROV Operation",
+          "primary": {
+            "tPop": 1,
+            "tC": 0.5,
+            "tR": 1.5
+          },
+          "strip": {
+            "tPop": null,
+            "tC": null,
+            "tR": null
+          },
+          "variables": [
+            {
+              "name": "Hs",
+              "designLimit": 1.5,
+              "unit": "[m]"
+            },
+            {
+              "name": "Wind",
+              "designLimit": 14,
+              "unit": "[m/s]"
+            },
+            {
+              "name": "Current",
+              "designLimit": 1.5,
+              "unit": "[knts]"
+            }
+          ],
+          "comment": "- Subject to ROV operator discretion",
+          "timeToAbandon": 1
+        }
+      ]
+    },
+    {
+      "name": "Cable Recovery",
+      "subOperations": [
+        {
+          "name": "First end cable recovery",
+          "primary": {
+            "tPop": 6,
+            "tC": 2,
+            "tR": 8
+          },
+          "strip": {
+            "tPop": null,
+            "tC": null,
+            "tR": null
+          },
+          "variables": [
+            {
+              "name": "Hs",
+              "designLimit": 1.5,
+              "unit": "[m]"
+            },
+            {
+              "name": "Wind",
+              "designLimit": 14,
+              "unit": "[m/s]"
+            },
+            {
+              "name": "Current",
+              "designLimit": 1.5,
+              "unit": "[knts]"
+            }
+          ],
+          "comment": "- Subject to cable cut tool operator discretion\n- Including cutter tool launching and recovery\n- Including cable seal, rigging, and deployment back to seabed",
+          "timeToAbandon": 1
+        },
+        {
+          "name": "Second end cable recovery",
+          "primary": {
+            "tPop": 6,
+            "tC": 3,
+            "tR": 9
+          },
+          "strip": {
+            "tPop": null,
+            "tC": null,
+            "tR": null
+          },
+          "variables": [
+            {
+              "name": "Hs",
+              "designLimit": 1.5,
+              "unit": "[m]"
+            },
+            {
+              "name": "Wind",
+              "designLimit": 14,
+              "unit": "[m/s]"
+            },
+            {
+              "name": "Current",
+              "designLimit": 1.5,
+              "unit": "[knts]"
+            }
+          ],
+          "comment": "- Subject to cable cut tool operator discretion\n- Including cutter tool launching and recovery",
+          "timeToAbandon": 1
+        }
+      ]
+    },
+    {
+      "name": "Cable Installation",
+      "subOperations": [
+        {
+          "name": "Inline Jointing",
+          "primary": {
+            "tPop": 144,
+            "tC": 24,
+            "tR": 168
+          },
+          "strip": {
+            "tPop": 12,
+            "tC": 1,
+            "tR": 13
+          },
+          "variables": [
+            {
+              "name": "Hs lower limit",
+              "designLimit": 1,
+              "unit": "[m]"
+            },
+            {
+              "name": "Hs upper limit",
+              "designLimit": 2.25,
+              "unit": "[m]"
+            },
+            {
+              "name": "Wind",
+              "designLimit": 14,
+              "unit": "[m/s]"
+            },
+            {
+              "name": "Current",
+              "designLimit": 1.5,
+              "unit": "[knts]"
+            }
+          ],
+          "comment": "-Contingency: Cable Cut, Seal and Abandonment",
+          "timeToAbandon": 6
+        },
+        {
+          "name": "In-line joint deployment",
+          "primary": {
+            "tPop": 6,
+            "tC": 3,
+            "tR": 9
+          },
+          "strip": {
+            "tPop": null,
+            "tC": null,
+            "tR": null
+          },
+          "variables": [
+            {
+              "name": "Hs lower limit",
+              "designLimit": 1,
+              "unit": "[m]"
+            },
+            {
+              "name": "Hs upper limit",
+              "designLimit": 2,
+              "unit": "[m]"
+            },
+            {
+              "name": "Wind",
+              "designLimit": 14,
+              "unit": "[m/s]"
+            },
+            {
+              "name": "Current",
+              "designLimit": 1.5,
+              "unit": "[knts]"
+            }
+          ],
+          "comment": "Point of no return",
+          "timeToAbandon": 6
+        },
+        {
+          "name": "Omega Jointing",
+          "primary": {
+            "tPop": 144,
+            "tC": 24,
+            "tR": 168
+          },
+          "strip": {
+            "tPop": 12,
+            "tC": 1,
+            "tR": 13
+          },
+          "variables": [
+            {
+              "name": "Hs lower limit",
+              "designLimit": 1,
+              "unit": "[m]"
+            },
+            {
+              "name": "Hs upper limit",
+              "designLimit": 2,
+              "unit": "[m]"
+            },
+            {
+              "name": "Wind",
+              "designLimit": 14,
+              "unit": "[m/s]"
+            },
+            {
+              "name": "Current",
+              "designLimit": 1.5,
+              "unit": "[knts]"
+            }
+          ],
+          "comment": "-Contingency: Cable Cut, Seal and Abandonment",
+          "timeToAbandon": 6
+        },
+        {
+          "name": "Omega joint deployment",
+          "primary": {
+            "tPop": 6,
+            "tC": 3,
+            "tR": 9
+          },
+          "strip": {
+            "tPop": null,
+            "tC": 1,
+            "tR": null
+          },
+          "variables": [
+            {
+              "name": "Hs lower limit",
+              "designLimit": 1,
+              "unit": "[m]"
+            },
+            {
+              "name": "Hs upper limit",
+              "designLimit": 2.25,
+              "unit": "[m]"
+            },
+            {
+              "name": "Wind",
+              "designLimit": 14,
+              "unit": "[m/s]"
+            },
+            {
+              "name": "Current",
+              "designLimit": 1,
+              "unit": "[knts]"
+            }
+          ],
+          "comment": "Point of no return",
+          "timeToAbandon": 6
+        },
+        {
+          "name": "First End Pull-In and Cable Lay Away (100m)",
+          "primary": {
+            "tPop": 4,
+            "tC": 2,
+            "tR": 6
+          },
+          "strip": {
+            "tPop": null,
+            "tC": null,
+            "tR": null
+          },
+          "variables": [
+            {
+              "name": "Hs lower limit",
+              "designLimit": 1.5,
+              "unit": "[m]"
+            },
+            {
+              "name": "Hs upper limit",
+              "designLimit": 2.25,
+              "unit": "[m]"
+            },
+            {
+              "name": "Wind",
+              "designLimit": 14,
+              "unit": "[m/s]"
+            },
+            {
+              "name": "Current",
+              "designLimit": 1.5,
+              "unit": "[knts]"
+            }
+          ],
+          "comment": "-Weather limits as per Cable Analysis Report\n- Vessel able to weathervane about flare angles\n- Contingency: Suspended lay\n- Point of no return: Abandonment only possible prior to CPS latching\n- CTV transfers could govern the wave limit",
+          "timeToAbandon": "See Cable Abandonment"
+        },
+        {
+          "name": "Cable Lay",
+          "primary": {
+            "tPop": 6,
+            "tC": 1,
+            "tR": 7
+          },
+          "strip": {
+            "tPop": null,
+            "tC": null,
+            "tR": null
+          },
+          "variables": [
+            {
+              "name": "Hs",
+              "designLimit": 2.5,
+              "unit": "[m]"
+            },
+            {
+              "name": "Wind",
+              "designLimit": 17.5,
+              "unit": "[m/s]"
+            },
+            {
+              "name": "Current",
+              "designLimit": 1.5,
+              "unit": "[knts]"
+            }
+          ],
+          "comment": "- Weather limits as per Cable Analysis Report\n- Vessel able to weathervane about flare angles\n- Tpop based on time between forecasts",
+          "timeToAbandon": "See Cable Abandonment"
+        },
+        {
+          "name": "Second End Pull-In and Quadrant Overboarding",
+          "primary": {
+            "tPop": 6,
+            "tC": 3,
+            "tR": 9
+          },
+          "strip": {
+            "tPop": null,
+            "tC": null,
+            "tR": null
+          },
+          "variables": [
+            {
+              "name": "Hs lower limit",
+              "designLimit": 1.5,
+              "unit": "[m]"
+            },
+            {
+              "name": "Hs upper limit",
+              "designLimit": 2.5,
+              "unit": "[m]"
+            },
+            {
+              "name": "Wind",
+              "designLimit": 14,
+              "unit": "[m/s]"
+            },
+            {
+              "name": "Current",
+              "designLimit": 1.5,
+              "unit": "[knts]"
+            }
+          ],
+          "comment": "- Weather limits as per Cable Analysis Report\n- Vessel NOT able to weathervane about flare angles\n- Point of no return: Abandonment only possible prior to CPS latching\n- CTV transfers could govern the wave limit",
+          "timeToAbandon": "See Cable Abandonment"
+        },
+        {
+          "name": "Shore Landing",
+          "primary": {
+            "tPop": 12,
+            "tC": 6,
+            "tR": 18
+          },
+          "strip": {
+            "tPop": null,
+            "tC": null,
+            "tR": null
+          },
+          "variables": [
+            {
+              "name": "Hs",
+              "designLimit": 1,
+              "unit": "[m]"
+            },
+            {
+              "name": "Wind",
+              "designLimit": 14,
+              "unit": "[m/s]"
+            },
+            {
+              "name": "Current",
+              "designLimit": 1,
+              "unit": "[knts]"
+            }
+          ],
+          "comment": "- Governed by support vessel limit",
+          "timeToAbandon": 6
+        }
+      ]
+    },
+    {
+      "name": "Anchor Handling",
+      "subOperations": [
+        {
+          "name": "Set Out / Recover Full Spread",
+          "primary": {
+            "tPop": 12,
+            "tC": 6,
+            "tR": 18
+          },
+          "strip": {
+            "tPop": null,
+            "tC": null,
+            "tR": null
+          },
+          "variables": [
+            {
+              "name": "Hs",
+              "designLimit": 1.2,
+              "unit": "[m]"
+            },
+            {
+              "name": "Wind",
+              "designLimit": 14,
+              "unit": "[m/s]"
+            },
+            {
+              "name": "Current",
+              "designLimit": 1,
+              "unit": "[knts]"
+            }
+          ],
+          "comment": "- Point of no return",
+          "timeToAbandon": "-"
+        },
+        {
+          "name": "Anchor Handling (per Anchor)",
+          "primary": {
+            "tPop": 2,
+            "tC": 2,
+            "tR": 4
+          },
+          "strip": {
+            "tPop": null,
+            "tC": null,
+            "tR": null
+          },
+          "variables": [
+            {
+              "name": "Hs",
+              "designLimit": 1.2,
+              "unit": "[m]"
+            },
+            {
+              "name": "Wind",
+              "designLimit": 14,
+              "unit": "[m/s]"
+            },
+            {
+              "name": "Current",
+              "designLimit": 1,
+              "unit": "[knts]"
+            }
+          ],
+          "comment": "-",
+          "timeToAbandon": 1
+        }
+      ]
+    },
+    {
+      "name": "Secondary Works",
+      "subOperations": [
+        {
+          "name": "Rock Bag Installation",
+          "primary": {
+            "tPop": 12,
+            "tC": 6,
+            "tR": 18
+          },
+          "strip": {
+            "tPop": null,
+            "tC": null,
+            "tR": null
+          },
+          "variables": [
+            {
+              "name": "Hs",
+              "designLimit": 1.8,
+              "unit": "[m]"
+            },
+            {
+              "name": "Wind",
+              "designLimit": 14,
+              "unit": "[m/s]"
+            },
+            {
+              "name": "Current",
+              "designLimit": 1.5,
+              "unit": "[knts]"
+            }
+          ],
+          "comment": "- Can be abandoned either by recovering the rock bag to deck or released for emergency situations",
+          "timeToAbandon": 0.5
+        }
+      ]
+    },
+    {
+      "name": "Contingency Operations",
+      "subOperations": [
+        {
+          "name": "Cable Abandonment on the Seabed",
+          "primary": {
+            "tPop": 2,
+            "tC": 1,
+            "tR": 3
+          },
+          "strip": {
+            "tPop": null,
+            "tC": null,
+            "tR": null
+          },
+          "variables": [
+            {
+              "name": "Hs",
+              "designLimit": 2.25,
+              "unit": "[m]"
+            },
+            {
+              "name": "Wind",
+              "designLimit": 14,
+              "unit": "[m/s]"
+            },
+            {
+              "name": "Current",
+              "designLimit": 1.5,
+              "unit": "[knts]"
+            }
+          ],
+          "comment": "- Vessel able to weathervane about flare angles\n- Weather limits as per Cable Analysis Report",
+          "timeToAbandon": "-"
+        },
+        {
+          "name": "Cable Recovery from the Seabed",
+          "primary": {
+            "tPop": 2,
+            "tC": 1,
+            "tR": 3
+          },
+          "strip": {
+            "tPop": null,
+            "tC": null,
+            "tR": null
+          },
+          "variables": [
+            {
+              "name": "Hs",
+              "designLimit": 2.25,
+              "unit": "[m]"
+            },
+            {
+              "name": "Wind",
+              "designLimit": 14,
+              "unit": "[m/s]"
+            },
+            {
+              "name": "Current",
+              "designLimit": 1.5,
+              "unit": "[knts]"
+            }
+          ],
+          "comment": "- Vessel able to weathervane about flare angles",
+          "timeToAbandon": "-"
+        }
+      ]
+    }
+  ],
+  "alphaHs": {
+    "A1 - With Environmental Monitoring": {
+      "4": {
+        "1.0": 0.9,
+        "2.0": 0.95,
+        "4.0": 1,
+        "6.0": 1
+      },
+      "12": {
+        "1.0": 0.78,
+        "2.0": 0.91,
+        "4.0": 0.95,
+        "6.0": 0.96
+      },
+      "24": {
+        "1.0": 0.72,
+        "2.0": 0.84,
+        "4.0": 0.87,
+        "6.0": 0.9
+      },
+      "36": {
+        "1.0": 0.68,
+        "2.0": 0.78,
+        "4.0": 0.8,
+        "6.0": 0.84
+      },
+      "48": {
+        "1.0": 0.66,
+        "2.0": 0.75,
+        "4.0": 0.78,
+        "6.0": 0.81
+      },
+      "72": {
+        "1.0": 0.61,
+        "2.0": 0.69,
+        "4.0": 0.75,
+        "6.0": 0.79
+      }
+    },
+    "A1 - No Environmental Monitoring": {
+      "12": {
+        "1.0": 0.72,
+        "2.0": 0.84,
+        "4.0": 0.87,
+        "6.0": 0.88
+      },
+      "24": {
+        "1.0": 0.69,
+        "2.0": 0.8,
+        "4.0": 0.84,
+        "6.0": 0.86
+      },
+      "36": {
+        "1.0": 0.68,
+        "2.0": 0.78,
+        "4.0": 0.8,
+        "6.0": 0.84
+      },
+      "48": {
+        "1.0": 0.66,
+        "2.0": 0.75,
+        "4.0": 0.78,
+        "6.0": 0.81
+      },
+      "72": {
+        "1.0": 0.61,
+        "2.0": 0.69,
+        "4.0": 0.75,
+        "6.0": 0.79
+      }
+    },
+    "A2 or B - With Environmental Monitoring": {
+      "4": {
+        "1.0": 0.9,
+        "2.0": 0.95,
+        "4.0": 1,
+        "6.0": 1
+      },
+      "12": {
+        "1.0": 0.75,
+        "2.0": 0.88,
+        "4.0": 0.91,
+        "6.0": 0.92
+      },
+      "24": {
+        "1.0": 0.69,
+        "2.0": 0.81,
+        "4.0": 0.84,
+        "6.0": 0.86
+      },
+      "36": {
+        "1.0": 0.65,
+        "2.0": 0.75,
+        "4.0": 0.77,
+        "6.0": 0.80
+      },
+      "48": {
+        "1.0": 0.63,
+        "2.0": 0.71,
+        "4.0": 0.75,
+        "6.0": 0.78
+      },
+      "72": {
+        "1.0": 0.58,
+        "2.0": 0.66,
+        "4.0": 0.71,
+        "6.0": 0.76
+      }
+    },
+    "A2 or B - No Environmental Monitoring": {
+      "12": {
+        "1.0": 0.68,
+        "2.0": 0.8,
+        "4.0": 0.83,
+        "6.0": 0.84
+      },
+      "24": {
+        "1.0": 0.66,
+        "2.0": 0.77,
+        "4.0": 0.8,
+        "6.0": 0.82
+      },
+      "36": {
+        "1.0": 0.65,
+        "2.0": 0.75,
+        "4.0": 0.77,
+        "6.0": 0.8
+      },
+      "48": {
+        "1.0": 0.63,
+        "2.0": 0.71,
+        "4.0": 0.75,
+        "6.0": 0.78
+      },
+      "72": {
+        "1.0": 0.58,
+        "2.0": 0.66,
+        "4.0": 0.71,
+        "6.0": 0.76
+      }
+    },
+    "C - With Environmental Monitoring": {
+      "4": {
+        "1.0": 0.9,
+        "2.0": 0.95,
+        "4.0": 1,
+        "6.0": 1
+      },
+      "12": {
+        "1.0": 0.72,
+        "2.0": 0.84,
+        "4.0": 0.87,
+        "6.0": 0.88
+      },
+      "24": {
+        "1.0": 0.66,
+        "2.0": 0.77,
+        "4.0": 0.8,
+        "6.0": 0.82
+      },
+      "36": {
+        "1.0": 0.62,
+        "2.0": 0.71,
+        "4.0": 0.73,
+        "6.0": 0.76
+      },
+      "48": {
+        "1.0": 0.6,
+        "2.0": 0.68,
+        "4.0": 0.71,
+        "6.0": 0.74
+      },
+      "72": {
+        "1.0": 0.55,
+        "2.0": 0.63,
+        "4.0": 0.68,
+        "6.0": 0.72
+      }
+    },
+    "C - No Environmental Monitoring": {
+      "12": {
+        "1.0": 0.65,
+        "2.0": 0.76,
+        "4.0": 0.79,
+        "6.0": 0.80
+      },
+      "24": {
+        "1.0": 0.63,
+        "2.0": 0.73,
+        "4.0": 0.76,
+        "6.0": 0.78
+      },
+      "36": {
+        "1.0": 0.62,
+        "2.0": 0.71,
+        "4.0": 0.73,
+        "6.0": 0.76
+      },
+      "48": {
+        "1.0": 0.6,
+        "2.0": 0.68,
+        "4.0": 0.71,
+        "6.0": 0.74
+      },
+      "72": {
+        "1.0": 0.55,
+        "2.0": 0.63,
+        "4.0": 0.68,
+        "6.0": 0.72
+      }
+    }
+  },
+  "alphaWind": {
+    "Vd<0.5 x V10 year return": {
+      "24": 0.8,
+      "48": 0.75,
+      "72": 0.7
+    },
+    "Vd>0.5 x V10 year return": {
+      "24": 0.85,
+      "48": 0.8,
+      "72": 0.75
+    }
+  }
+}

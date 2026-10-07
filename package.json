@@ -1,0 +1,19 @@
+{
+  "name": "nsea-engineering-tools",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node --test test/*.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.22.3",
+    "express-session": "^1.18.1",
+    "passport": "^0.7.0",
+    "passport-azure-ad": "^4.3.5",
+    "pdfkit": "^0.15.0"
+  }
+}

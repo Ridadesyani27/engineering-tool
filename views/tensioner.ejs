@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tensioner Squeeze Pressure Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,300;0,400;0,700;0,900;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="nseastyle.css">
+</head>
+<body>
+<header>
+  <div class="brand-row">
+    <div class="brand-left">
+      <div class="brand-logo-wrap"><img class="brand-logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzOSIgaGVpZ2h0PSI3NCIgdmlld0JveD0iMCAwIDM5IDc0IiBmaWxsPSJub25lIj48ZyBjbGlwLXBhdGg9InVybCgjY2xpcDBfMTE0XzQ2OSkiPjxwYXRoIGQ9Ik0xOS4zMTk3IDBDMjkuOTg5NyAwIDM4LjQ2OTcgNy4yMzk5OSAzOC40Njk3IDE4LjI3VjUyLjQ3SDI4LjMwOTdWMTguNjlDMjguMzA5NyAxMi42OSAyNC43OTk3IDkuMTEwMDIgMTkuMzA5NyA5LjExMDAyQzEzLjgxOTcgOS4xMTAwMiAxMC4yNDk3IDEyLjY5IDEwLjI0OTcgMTguNjlWNTIuNTJIMC4xNzk2ODhWMTguMzJDMC4xNzk2ODggNy4zMjAwMSA4LjY0OTcgMC4wNDk5ODc4IDE5LjMxOTcgMC4wNDk5ODc4IiBmaWxsPSIjRkZFRTAyIj48L3BhdGg+PHBhdGggZD0iTTUgNzMuMTg5NUM0LjA3MDY1IDczLjI0NTYgMy4xNDA0IDczLjA5NTUgMi4yNzU5NCA3Mi43NDk3QzEuNDExNDggNzIuNDAzOSAwLjYzNDI1IDcxLjg3MTEgMCA3MS4xODk1TDAuNzk5OTg4IDcwLjM4OTVDMS4zMjg0MyA3MC45ODk0IDEuOTg2OTUgNzEuNDYwNyAyLjcyNTIyIDcxLjc2NzVDMy40NjM0OSA3Mi4wNzQyIDQuMjYyMDMgNzIuMjA4MyA1LjA2IDcyLjE1OTVDNy40MyA3Mi4xNTk1IDguOTI5OTkgNzEuMDE5NSA4LjkyOTk5IDY5LjA1OTVDOC45NTE1NiA2OC42Njg4IDguODg4NiA2OC4yNzggOC43NDUzNiA2Ny45MTM5QzguNjAyMTIgNjcuNTQ5NyA4LjM4MjAyIDY3LjIyMDggOC4xMDAwNCA2Ni45NDk1QzcuNDgyMTkgNjYuNDU1MyA2LjcyMDc4IDY2LjE3NDYgNS45Mjk5OSA2Ni4xNDk1TDQuMTc5OTkgNjUuODY5NUMzLjIwMjYgNjUuNzYyOCAyLjI3NDQyIDY1LjM4NTMgMS41IDY0Ljc3OTVDMS4xMDMxOSA2NC40Mzk0IDAuNzg5NiA2NC4wMTI5IDAuNTgzMzEzIDYzLjUzMjdDMC4zNzcwMjUgNjMuMDUyNSAwLjI4MzUyMiA2Mi41MzE0IDAuMzA5OTk4IDYyLjAwOTVDMC4zMDk5OTggNTkuNDk5NSAyLjExMDA0IDU3Ljg4OTUgNC45ODAwNCA1Ny44ODk1QzUuNzc0MTIgNTcuODU3NyA2LjU2NjQ4IDU3Ljk4NTYgNy4zMTAyNCA1OC4yNjU2QzguMDU0IDU4LjU0NTYgOC43MzQgNTguOTcxOSA5LjMxIDU5LjUxOTVMOC41NzAwMSA2MC4yNTk1QzguMDg5NDIgNTkuNzg5OSA3LjUxNzM4IDU5LjQyNDIgNi44ODk0NyA1OS4xODUxQzYuMjYxNTUgNTguOTQ2IDUuNTkxMTcgNTguODM4NSA0LjkxOTk4IDU4Ljg2OTVDMi43Mzk5OCA1OC44Njk1IDEuNDI5OTkgNjAuMDY5NSAxLjQyOTk5IDYxLjk2OTVDMS4zOTgxNSA2Mi4zNDAzIDEuNDUxOTIgNjIuNzEzNSAxLjU4NzE2IDYzLjA2MDNDMS43MjI0IDYzLjQwNyAxLjkzNTUyIDYzLjcxODEgMi4yMTAwMiA2My45Njk1QzIuODY0NzcgNjQuNDY2MSAzLjYzNjA1IDY0Ljc4NjMgNC40NTAwMSA2NC44OTk1TDYuMDgwMDIgNjUuMTQ5NUM3LjA1NDQ4IDY1LjIwMTQgNy45ODk3IDY1LjU1MDQgOC43NjAwMSA2Ni4xNDk1QzkuMTgyMjMgNjYuNTA1NiA5LjUxOTEyIDY2Ljk1MTkgOS43NDU4NSA2Ny40NTU1QzkuOTcyNTggNjcuOTU5MiAxMC4wODM0IDY4LjUwNzMgMTAuMDcgNjkuMDU5NUMxMC4wNyA3MS41ODk1IDguMDcgNzMuMjE5NSA1IDczLjIxOTUiIGZpbGw9ImJsYWNrIj48L3BhdGg+PHBhdGggZD0iTTE0LjQzOTUgNzMuMDU5M1Y1OC4wMjkzSDIzLjU0OTRWNTkuMDQ5M0gxNS41Nzk1VjY0Ljk3OTNIMjIuMzY5NFY2NS45ODkzSDE1LjU3OTVWNzIuMDQ5M0gyMy41NDk0VjczLjA1OTNIMTQuNDM5NVoiIGZpbGw9ImJsYWNrIj48L3BhdGg+PHBhdGggZD0iTTM3LjMxOTIgNzMuMDYwNUwzNi4wMDkyIDY5LjQxMDVIMjkuMDA5MkwyNy43MDkyIDczLjA2MDVIMjYuNDQ5MkwzMS45NzkyIDU4LjA2MDVIMzIuOTc5MkwzOC41MDkyIDczLjA2MDVIMzcuMzE5MlpNMzIuNTA5MiA1OS41NTA0TDI5LjM1OTIgNjguNDAwNUgzNS42NDkyTDMyLjUwOTIgNTkuNTUwNFoiIGZpbGw9ImJsYWNrIj48L3BhdGg+PC9nPjxkZWZzPjxjbGlwUGF0aCBpZD0iY2xpcDBfMTE0XzQ2OSI+PHJlY3Qgd2lkdGg9IjM5IiBoZWlnaHQ9Ijc0IiBmaWxsPSJ3aGl0ZSI+PC9yZWN0PjwvY2xpcFBhdGg+PC9kZWZzPjwvc3ZnPg==" alt="N-Sea logo"></div>
+      <div>
+        <div class="project-label">Cable Engineering Tools</div>
+        <div class="project-sub-label"><a class="dashboard-link" href="/">Back to dashboard</a></div>
+      </div>
+    </div>
+    <div class="brand-title">
+      <div>
+        <h1>Tensioner Squeeze Pressure Calculator</h1>
+        <p>Required squeeze pressure check for holding cable tension</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="panel inputs">
+    <span class="section-kicker">Inputs</span>
+    <h2>Calculation values</h2>
+
+    <form id="squeezeForm">
+      <div class="field">
+        <label for="cableMaximumTension">Cable maximum tension</label>
+        <div class="input-wrap">
+          <input id="cableMaximumTension" name="cableMaximumTension" type="number" value="150" min="0" step="0.01" required>
+          <span class="unit">kN</span>
+        </div>
+        <div class="hint">Maximum cable tension to be resisted by the tensioner.</div>
+      </div>
+
+      <div class="field">
+        <label for="tensionerContactLength">Tensioner contact length</label>
+        <div class="input-wrap">
+          <input id="tensionerContactLength" name="tensionerContactLength" type="number" value="4.9" min="0" step="0.01" required>
+          <span class="unit">m</span>
+        </div>
+        <div class="hint">Length of tensioner track in contact with the cable.</div>
+      </div>
+
+      <div class="field">
+        <label for="frictionCoefficient">Friction coefficient</label>
+        <div class="input-wrap">
+          <input id="frictionCoefficient" name="frictionCoefficient" type="number" value="0.4" min="0" step="0.01" required>
+          <span class="unit">-</span>
+        </div>
+        <div class="hint">Coefficient of friction between the cable and tensioner.</div>
+      </div>
+
+      <div class="field">
+        <label for="allowableSqueezeLoad">Allowable squeeze load</label>
+        <div class="input-wrap">
+          <input id="allowableSqueezeLoad" name="allowableSqueezeLoad" type="number" value="70" min="0" step="0.01" required>
+          <span class="unit">kN/m</span>
+        </div>
+        <div class="hint">Maximum allowable squeeze load on the cable.</div>
+      </div>
+
+      <div class="buttons">
+        <button class="primary full-row" id="generateReportBtn" type="button">Generate Report PDF</button>
+        <button class="secondary full-row" id="saveProjectBtn" type="button">Save Project</button>
+        <button class="secondary full-row" id="loadProjectBtn" type="button">Load Project</button>
+        <div class="button-row">
+          <button class="danger" id="undoBtn" type="button">Undo</button>
+          <button class="action" id="redoBtn" type="button">Redo</button>
+        </div>
+        <input id="projectFileInput" type="file" accept=".csv,text/csv" hidden>
+      </div>
+    </form>
+
+    <div class="note">
+      Formula: squeeze pressure = cable maximum tension / (contact length x friction coefficient x 2).
+    </div>
+  </section>
+
+  <section class="panel outputs">
+    <span class="section-kicker">Results</span>
+    <h2>Pressure and utilization check</h2>
+
+    <div id="error" class="error"></div>
+
+    <div class="summary">
+      <div class="metric">
+        <div class="name">Squeeze pressure</div>
+        <div id="squeezePressure" class="value">-</div>
+      </div>
+      <div class="metric">
+        <div class="name">Allowable load</div>
+        <div id="allowableLoad" class="value">-</div>
+      </div>
+      <div class="metric">
+        <div class="name">Utilization</div>
+        <div id="utilizationFactor" class="value">-</div>
+      </div>
+      <div class="metric">
+        <div class="name">Status</div>
+        <div id="statusText" class="value">-</div>
+      </div>
+    </div>
+
+    <div class="checks">
+      <div id="pressureCheck" class="pill ok">Waiting for calculation</div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter</th>
+            <th>Value</th>
+            <th>Unit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Cable maximum tension</td>
+            <td id="tableCableMaximumTension">-</td>
+            <td>kN</td>
+          </tr>
+          <tr>
+            <td>Tensioner contact length</td>
+            <td id="tableTensionerContactLength">-</td>
+            <td>m</td>
+          </tr>
+          <tr>
+            <td>Friction coefficient</td>
+            <td id="tableFrictionCoefficient">-</td>
+            <td>-</td>
+          </tr>
+          <tr>
+            <td>Track factor</td>
+            <td>2.00</td>
+            <td>-</td>
+          </tr>
+          <tr>
+            <td>Required squeeze pressure</td>
+            <td id="tableSqueezePressure">-</td>
+            <td>kN/m</td>
+          </tr>
+          <tr>
+            <td>Allowable squeeze load</td>
+            <td id="tableAllowableSqueezeLoad">-</td>
+            <td>kN/m</td>
+          </tr>
+          <tr>
+            <td>Utilization factor</td>
+            <td id="tableUtilizationFactor">-</td>
+            <td>%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span class="footer-brand">N-Sea Cable Engineering Tools</span> - Built by Rida. Still evolving, already surprisingly useful. Found a bug or have an idea to make it even better?
+    <a class="footer-contact" href="<%= mailtoLink %>">Drop me a line and let me know.</a>
+  </div>
+</footer>
+
+<script>
+const form = document.getElementById('squeezeForm');
+const error = document.getElementById('error');
+const inputKeys = ['cableMaximumTension', 'tensionerContactLength', 'frictionCoefficient', 'allowableSqueezeLoad'];
+const fields = {
+  cableMaximumTension: document.getElementById('cableMaximumTension'),
+  tensionerContactLength: document.getElementById('tensionerContactLength'),
+  frictionCoefficient: document.getElementById('frictionCoefficient'),
+  allowableSqueezeLoad: document.getElementById('allowableSqueezeLoad')
+};
+let history = [];
+let historyIndex = -1;
+let latestResult = null;
+const initialReportError = <%- JSON.stringify(reportError || '') %>;
+
+function readNumber(field) {
+  return Number.parseFloat(field.value);
+}
+
+function format(value, decimals = 2) {
+  return Number.isFinite(value) ? value.toFixed(decimals) : '-';
+}
+
+function setError(message) {
+  error.textContent = message;
+  error.style.display = message ? 'block' : 'none';
+}
+
+function getInputState() {
+  return Object.fromEntries(inputKeys.map(key => [key, fields[key].value]));
+}
+
+function sameState(a, b) {
+  return inputKeys.every(key => a && b && a[key] === b[key]);
+}
+
+function applyInputState(state) {
+  inputKeys.forEach(key => {
+    fields[key].value = state[key];
+  });
+  calculate();
+}
+
+function updateHistoryButtons() {
+  document.getElementById('undoBtn').disabled = historyIndex <= 0;
+  document.getElementById('redoBtn').disabled = historyIndex >= history.length - 1;
+}
+
+function recordHistory() {
+  const state = getInputState();
+  if (sameState(state, history[historyIndex])) return;
+  history = history.slice(0, historyIndex + 1);
+  history.push(state);
+  historyIndex = history.length - 1;
+  updateHistoryButtons();
+}
+
+function download(filename, content, type) {
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(new Blob([content], { type }));
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
+function csvEscape(value) {
+  return `"${String(value ?? '').replaceAll('"', '""')}"`;
+}
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[char]));
+}
+
+function parseCsv(text) {
+  const rows = [];
+  let row = [];
+  let cell = '';
+  let quoted = false;
+
+  for (let index = 0; index < text.length; index += 1) {
+    const char = text[index];
+    if (quoted) {
+      if (char === '"' && text[index + 1] === '"') {
+        cell += '"';
+        index += 1;
+      } else if (char === '"') {
+        quoted = false;
+      } else {
+        cell += char;
+      }
+    } else if (char === '"') {
+      quoted = true;
+    } else if (char === ',') {
+      row.push(cell);
+      cell = '';
+    } else if (char === '\n') {
+      row.push(cell);
+      rows.push(row);
+      row = [];
+      cell = '';
+    } else if (char !== '\r') {
+      cell += char;
+    }
+  }
+
+  row.push(cell);
+  rows.push(row);
+  return rows.filter(item => item.some(value => value !== ''));
+}
+
+function calculate() {
+  const cableMaximumTension = readNumber(fields.cableMaximumTension);
+  const tensionerContactLength = readNumber(fields.tensionerContactLength);
+  const frictionCoefficient = readNumber(fields.frictionCoefficient);
+  const allowableSqueezeLoad = readNumber(fields.allowableSqueezeLoad);
+
+  if (
+    cableMaximumTension < 0 ||
+    tensionerContactLength <= 0 ||
+    frictionCoefficient <= 0 ||
+    allowableSqueezeLoad <= 0 ||
+    [cableMaximumTension, tensionerContactLength, frictionCoefficient, allowableSqueezeLoad].some(value => !Number.isFinite(value))
+  ) {
+    setError('Please enter valid positive values. Contact length, friction coefficient and allowable squeeze load must be greater than zero.');
+    return;
+  }
+
+  setError('');
+
+  const squeezePressure = cableMaximumTension / (tensionerContactLength * frictionCoefficient * 2);
+  const utilizationFactor = (squeezePressure / allowableSqueezeLoad) * 100;
+  const isWithinAllowable = squeezePressure <= allowableSqueezeLoad;
+  latestResult = {
+    cableMaximumTension,
+    tensionerContactLength,
+    frictionCoefficient,
+    allowableSqueezeLoad,
+    squeezePressure,
+    utilizationFactor,
+    status: isWithinAllowable
+      ? 'OK, required squeeze pressure is below the allowable squeeze load'
+      : 'NOT OK, required squeeze pressure is above the allowable squeeze load'
+  };
+
+  document.getElementById('squeezePressure').textContent = `${format(squeezePressure)} kN/m`;
+  document.getElementById('allowableLoad').textContent = `${format(allowableSqueezeLoad)} kN/m`;
+  document.getElementById('utilizationFactor').textContent = `${format(utilizationFactor)}%`;
+  document.getElementById('statusText').textContent = latestResult.status;
+
+  const pressureCheck = document.getElementById('pressureCheck');
+  pressureCheck.className = `pill ${isWithinAllowable ? 'ok' : 'bad'}`;
+  pressureCheck.textContent = isWithinAllowable
+    ? `The squeeze pressure is ${format(squeezePressure)} kN/m, which is within the allowable squeeze load of ${format(allowableSqueezeLoad)} kN/m.`
+    : `The squeeze pressure is ${format(squeezePressure)} kN/m, which is greater than the allowable squeeze load of ${format(allowableSqueezeLoad)} kN/m. Please reduce the tension.`;
+
+  document.getElementById('tableCableMaximumTension').textContent = format(cableMaximumTension);
+  document.getElementById('tableTensionerContactLength').textContent = format(tensionerContactLength);
+  document.getElementById('tableFrictionCoefficient').textContent = format(frictionCoefficient);
+  document.getElementById('tableSqueezePressure').textContent = format(squeezePressure);
+  document.getElementById('tableAllowableSqueezeLoad').textContent = format(allowableSqueezeLoad);
+  document.getElementById('tableUtilizationFactor').textContent = format(utilizationFactor);
+}
+
+function generateReport() {
+  calculate();
+  if (!latestResult) return;
+
+  const generated = new Date().toISOString().slice(0, 10);
+  const logoHtml = document.querySelector('.brand-logo')?.outerHTML ?? '';
+  const detailRows = [
+    ['Cable maximum tension', `${format(latestResult.cableMaximumTension)} kN`],
+    ['Tensioner contact length', `${format(latestResult.tensionerContactLength)} m`],
+    ['Friction coefficient', format(latestResult.frictionCoefficient)],
+    ['Track factor', '2.00'],
+    ['Required squeeze pressure', `${format(latestResult.squeezePressure)} kN/m`],
+    ['Allowable squeeze load', `${format(latestResult.allowableSqueezeLoad)} kN/m`],
+    ['Utilization factor', `${format(latestResult.utilizationFactor)}%`],
+    ['Status', latestResult.status]
+  ];
+  const reportWindow = window.open('', '_blank');
+  if (!reportWindow) {
+    alert('Please allow pop-ups to generate the PDF report.');
+    return;
+  }
+
+  reportWindow.document.write(`
+    <!doctype html>
+    <html>
+      <head>
+        <title>Tensioner Squeeze Pressure Report</title>
+        <style>
+          * { box-sizing: border-box; }
+          body { font-family: Calibri, Arial, sans-serif; color: #000; margin: 18px; background: #d9d9d9; }
+          .page { width: 210mm; min-height: 297mm; margin: 0 auto; padding: 14mm; background: #fff; }
+          .title { position: relative; display: flex; align-items: center; justify-content: center; min-height: 82px; background: #142968; color: #fff; font-size: 20px; font-weight: 700; text-align: center; padding: 12px 80px; }
+          .report-logo-wrap { position: absolute; left: 18px; top: 9px; display: flex; align-items: center; justify-content: center; width: 54px; height: 64px; background: #fff; }
+          .report-logo-wrap img { width: 34px; height: auto; display: block; }
+          .meta { width: 100%; margin-top: 8px; border-collapse: collapse; table-layout: fixed; }
+          table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+          th, td { border: 1px solid #d0d0d0; padding: 5px 7px; vertical-align: middle; overflow-wrap: anywhere; font-size: 10px; }
+          th { background: #142968; color: #fff; font-weight: 700; text-align: center; }
+          td { background: #f2f2f2; text-align: center; }
+          .meta th { width: 22%; background: #d9d9d9; color: #000; text-align: left; }
+          .meta td { text-align: left; }
+          h2 { margin: 12px 0 6px; color: #142968; font-size: 14px; }
+          .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 10px 0; }
+          .card { border: 1px solid #d0d0d0; background: #f2f2f2; padding: 8px; min-height: 48px; }
+          .card span { display: block; color: #555; font-size: 8px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+          .card strong { display: block; margin-top: 5px; color: #142968; font-size: 15px; }
+          .ok { color: #142968; font-weight: 700; }
+          .bad { color: #c9221c; font-weight: 700; }
+          .note { margin-top: 8px; color: #555; font-size: 9px; }
+          @page { size: A4 portrait; margin: 10mm; }
+          @media print { body { margin: 0; background: #fff; } .page { width: auto; min-height: auto; padding: 0; } }
+        </style>
+      </head>
+      <body>
+        <div class="page">
+          <div class="title"><span class="report-logo-wrap">${logoHtml}</span><span>Tensioner Squeeze Pressure Report</span></div>
+          <table class="meta">
+            <tr><th>Date</th><td>${escapeHtml(generated)}</td><th>Status</th><td class="${latestResult.squeezePressure <= latestResult.allowableSqueezeLoad ? 'ok' : 'bad'}">${latestResult.squeezePressure <= latestResult.allowableSqueezeLoad ? 'OK' : 'NOT OK'}</td></tr>
+          </table>
+          <div class="summary">
+            <div class="card"><span>Squeeze pressure</span><strong>${escapeHtml(format(latestResult.squeezePressure))} kN/m</strong></div>
+            <div class="card"><span>Allowable load</span><strong>${escapeHtml(format(latestResult.allowableSqueezeLoad))} kN/m</strong></div>
+            <div class="card"><span>Utilization</span><strong>${escapeHtml(format(latestResult.utilizationFactor))}%</strong></div>
+            <div class="card"><span>Status</span><strong class="${latestResult.squeezePressure <= latestResult.allowableSqueezeLoad ? 'ok' : 'bad'}">${latestResult.squeezePressure <= latestResult.allowableSqueezeLoad ? 'OK' : 'NOT OK'}</strong></div>
+          </div>
+          <h2>Calculation Details</h2>
+          <table><tbody>${detailRows.map(([label, value], index) => `<tr><th>${escapeHtml(label)}</th><td class="${index === detailRows.length - 1 ? (latestResult.squeezePressure <= latestResult.allowableSqueezeLoad ? 'ok' : 'bad') : ''}">${escapeHtml(value)}</td></tr>`).join('')}</tbody></table>
+          <p class="note">Formula: squeeze pressure = cable maximum tension / (contact length x friction coefficient x 2).</p>
+        </div>
+        <script>window.addEventListener('load', () => window.print());<\/script>
+      </body>
+    </html>
+  `);
+  reportWindow.document.close();
+}
+
+function saveProject() {
+  const state = getInputState();
+  const csv = 'Parameter,Value\n' + inputKeys.map(key => [key, state[key]].map(csvEscape).join(',')).join('\n');
+  download('tensioner_squeeze_pressure_project.csv', csv, 'text/csv');
+}
+
+function loadProjectFile(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = Object.fromEntries(parseCsv(String(reader.result)).slice(1));
+      inputKeys.forEach(key => {
+        if (!(key in data)) throw new Error('Project file is missing required inputs.');
+        fields[key].value = data[key];
+      });
+      recordHistory();
+      calculate();
+    } catch (loadError) {
+      setError(loadError.message);
+    } finally {
+      document.getElementById('projectFileInput').value = '';
+    }
+  };
+  reader.readAsText(file);
+}
+
+form.addEventListener('submit', event => {
+  event.preventDefault();
+  calculate();
+});
+
+Object.values(fields).forEach(field => {
+  field.addEventListener('input', () => {
+    recordHistory();
+    calculate();
+  });
+});
+
+document.getElementById('generateReportBtn').addEventListener('click', generateReport);
+document.getElementById('saveProjectBtn').addEventListener('click', saveProject);
+document.getElementById('loadProjectBtn').addEventListener('click', () => document.getElementById('projectFileInput').click());
+document.getElementById('projectFileInput').addEventListener('change', event => {
+  const file = event.target.files[0];
+  if (file) loadProjectFile(file);
+});
+document.getElementById('undoBtn').addEventListener('click', () => {
+  if (historyIndex <= 0) return;
+  historyIndex -= 1;
+  applyInputState(history[historyIndex]);
+  updateHistoryButtons();
+});
+document.getElementById('redoBtn').addEventListener('click', () => {
+  if (historyIndex >= history.length - 1) return;
+  historyIndex += 1;
+  applyInputState(history[historyIndex]);
+  updateHistoryButtons();
+});
+
+recordHistory();
+calculate();
+if (initialReportError) setError(initialReportError);
+</script>
+</body>
+</html>

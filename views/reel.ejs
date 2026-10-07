@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reel Drive Stowage Calculator</title>
+  <link rel="stylesheet" href="nseastyle.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,300;0,400;0,700;0,900;1,700&display=swap" rel="stylesheet">
+</head>
+<body>
+<header>
+  <div class="brand-row">
+    <div class="brand-left">
+      <div class="brand-logo-wrap"><img class="brand-logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzOSIgaGVpZ2h0PSI3NCIgdmlld0JveD0iMCAwIDM5IDc0IiBmaWxsPSJub25lIj48ZyBjbGlwLXBhdGg9InVybCgjY2xpcDBfMTE0XzQ2OSkiPjxwYXRoIGQ9Ik0xOS4zMTk3IDBDMjkuOTg5NyAwIDM4LjQ2OTcgNy4yMzk5OSAzOC40Njk3IDE4LjI3VjUyLjQ3SDI4LjMwOTdWMTguNjlDMjguMzA5NyAxMi42OSAyNC43OTk3IDkuMTEwMDIgMTkuMzA5NyA5LjExMDAyQzEzLjgxOTcgOS4xMTAwMiAxMC4yNDk3IDEyLjY5IDEwLjI0OTcgMTguNjlWNTIuNTJIMC4xNzk2ODhWMTguMzJDMC4xNzk2ODggNy4zMjAwMSA4LjY0OTcgMC4wNDk5ODc4IDE5LjMxOTcgMC4wNDk5ODc4IiBmaWxsPSIjRkZFRTAyIj48L3BhdGg+PHBhdGggZD0iTTUgNzMuMTg5NUM0LjA3MDY1IDczLjI0NTYgMy4xNDA0IDczLjA5NTUgMi4yNzU5NCA3Mi43NDk3QzEuNDExNDggNzIuNDAzOSAwLjYzNDI1IDcxLjg3MTEgMCA3MS4xODk1TDAuNzk5OTg4IDcwLjM4OTVDMS4zMjg0MyA3MC45ODk0IDEuOTg2OTUgNzEuNDYwNyAyLjcyNTIyIDcxLjc2NzVDMy40NjM0OSA3Mi4wNzQyIDQuMjYyMDMgNzIuMjA4MyA1LjA2IDcyLjE1OTVDNy40MyA3Mi4xNTk1IDguOTI5OTkgNzEuMDE5NSA4LjkyOTk5IDY5LjA1OTVDOC45NTE1NiA2OC42Njg4IDguODg4NiA2OC4yNzggOC43NDUzNiA2Ny45MTM5QzguNjAyMTIgNjcuNTQ5NyA4LjM4MjAyIDY3LjIyMDggOC4xMDAwNCA2Ni45NDk1QzcuNDgyMTkgNjYuNDU1MyA2LjcyMDc4IDY2LjE3NDYgNS45Mjk5OSA2Ni4xNDk1TDQuMTc5OTkgNjUuODY5NUMzLjIwMjYgNjUuNzYyOCAyLjI3NDQyIDY1LjM4NTMgMS41IDY0Ljc3OTVDMS4xMDMxOSA2NC40Mzk0IDAuNzg5NiA2NC4wMTI5IDAuNTgzMzEzIDYzLjUzMjdDMC4zNzcwMjUgNjMuMDUyNSAwLjI4MzUyMiA2Mi41MzE0IDAuMzA5OTk4IDYyLjAwOTVDMC4zMDk5OTggNTkuNDk5NSAyLjExMDA0IDU3Ljg4OTUgNC45ODAwNCA1Ny44ODk1QzUuNzc0MTIgNTcuODU3NyA2LjU2NjQ4IDU3Ljk4NTYgNy4zMTAyNCA1OC4yNjU2QzguMDU0IDU4LjU0NTYgOC43MzQgNTguOTcxOSA5LjMxIDU5LjUxOTVMOC41NzAwMSA2MC4yNTk1QzguMDg5NDIgNTkuNzg5OSA3LjUxNzM4IDU5LjQyNDIgNi44ODk0NyA1OS4xODUxQzYuMjYxNTUgNTguOTQ2IDUuNTkxMTcgNTguODM4NSA0LjkxOTk4IDU4Ljg2OTVDMi43Mzk5OCA1OC44Njk1IDEuNDI5OTkgNjAuMDY5NSAxLjQyOTk5IDYxLjk2OTVDMS4zOTgxNSA2Mi4zNDAzIDEuNDUxOTIgNjIuNzEzNSAxLjU4NzE2IDYzLjA2MDNDMS43MjI0IDYzLjQwNyAxLjkzNTUyIDYzLjcxODEgMi4yMTAwMiA2My45Njk1QzIuODY0NzcgNjQuNDY2MSAzLjYzNjA1IDY0Ljc4NjMgNC40NTAwMSA2NC44OTk1TDYuMDgwMDIgNjUuMTQ5NUM3LjA1NDQ4IDY1LjIwMTQgNy45ODk3IDY1LjU1MDQgOC43NjAwMSA2Ni4xNDk1QzkuMTgyMjMgNjYuNTA1NiA5LjUxOTEyIDY2Ljk1MTkgOS43NDU4NSA2Ny40NTU1QzkuOTcyNTggNjcuOTU5MiAxMC4wODM0IDY4LjUwNzMgMTAuMDcgNjkuMDU5NUMxMC4wNyA3MS41ODk1IDguMDcgNzMuMjE5NSA1IDczLjIxOTUiIGZpbGw9ImJsYWNrIj48L3BhdGg+PHBhdGggZD0iTTE0LjQzOTUgNzMuMDU5M1Y1OC4wMjkzSDIzLjU0OTRWNTkuMDQ5M0gxNS41Nzk1VjY0Ljk3OTNIMjIuMzY5NFY2NS45ODkzSDE1LjU3OTVWNzIuMDQ5M0gyMy41NDk0VjczLjA1OTNIMTQuNDM5NVoiIGZpbGw9ImJsYWNrIj48L3BhdGg+PHBhdGggZD0iTTM3LjMxOTIgNzMuMDYwNUwzNi4wMDkyIDY5LjQxMDVIMjkuMDA5MkwyNy43MDkyIDczLjA2MDVIMjYuNDQ5MkwzMS45NzkyIDU4LjA2MDVIMzIuOTc5MkwzOC41MDkyIDczLjA2MDVIMzcuMzE5MlpNMzIuNTA5MiA1OS41NTA0TDI5LjM1OTIgNjguNDAwNUgzNS42NDkyTDMyLjUwOTIgNTkuNTUwNFoiIGZpbGw9ImJsYWNrIj48L3BhdGg+PC9nPjxkZWZzPjxjbGlwUGF0aCBpZD0iY2xpcDBfMTE0XzQ2OSI+PHJlY3Qgd2lkdGg9IjM5IiBoZWlnaHQ9Ijc0IiBmaWxsPSJ3aGl0ZSI+PC9yZWN0PjwvY2xpcFBhdGg+PC9kZWZzPjwvc3ZnPg==" alt="N-Sea logo"></div>
+      <div><div class="project-label">Cable Engineering Tools</div><div class="project-sub-label"><a class="dashboard-link" href="/">Back to dashboard</a></div></div>
+    </div>
+    <div class="brand-title">
+      <div>
+        <h1>Reel Drive Stowage Calculator</h1>
+        <p>Calculate cable length to be stowed in RDS</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="panel inputs">
+    <form method="post" action="">
+    <div class="input-tabs" role="tablist" aria-label="Reel drive input tabs">
+      <button class="tab-button is-active" id="projectTab" type="button" data-tab-target="projectInputPanel" role="tab" aria-controls="projectInputPanel" aria-selected="true">Project Input</button>
+      <button class="tab-button" id="engineeringTab" type="button" data-tab-target="engineeringInputPanel" role="tab" aria-controls="engineeringInputPanel" aria-selected="false">Input Values</button>
+    </div>
+
+    <div class="tab-panel is-active" id="projectInputPanel" role="tabpanel" aria-labelledby="projectTab">
+      <h2>Project Input</h2>
+      <div class="field">
+        <label for="projectNameInput">Project Name</label>
+        <input id="projectNameInput" name="projectName" type="text">
+      </div>
+      <div class="field">
+        <label for="projectNumberInput">Project Number</label>
+        <input id="projectNumberInput" name="projectNumber" type="text">
+      </div>
+      <div class="field">
+        <label for="revisionInput">Revision</label>
+        <input id="revisionInput" name="revision" type="text">
+      </div>
+      <div class="field">
+        <label for="authorInput">Author</label>
+        <input id="authorInput" name="author" type="text">
+      </div>
+    </div>
+
+    <div class="tab-panel" id="engineeringInputPanel" role="tabpanel" aria-labelledby="engineeringTab">
+      <span class="section-kicker">Engineering inputs</span><h2>Input values</h2>
+      <div id="error" class="error"<% if (reportError) { %> style="display:block"<% } %>><%= reportError || '' %></div>
+
+      <div class="field">
+        <label for="cableOd">Cable outer diameter</label>
+        <div class="input-wrap"><input id="cableOd" name="cableOd" type="number" min="1" step="1" value="200"><span class="unit">mm</span></div>
+      </div>
+      <div class="field">
+        <label for="outerFlange">Outer drum flange height B</label>
+        <div class="input-wrap"><input id="outerFlange" name="outerFlange" type="number" min="0.1" step="0.1" value="15"><span class="unit">m</span></div>
+        <div class="hint">Total height of the outside flange.</div>
+      </div>
+      <div class="field">
+        <label for="unusedArea">Unused top height D</label>
+        <div class="input-wrap"><input id="unusedArea" name="unusedArea" type="number" min="0" step="0.1" value="0.5"><span class="unit">m</span></div>
+        <div class="hint">Free height left from the top of the drum flange.</div>
+      </div>
+      <div class="field">
+        <label for="innerFlange">Inner drum height A</label>
+        <div class="input-wrap"><input id="innerFlange" name="innerFlange" type="number" min="0.1" step="0.1" value="5"><span class="unit">m</span></div>
+        <div class="hint">Height of the inner drum core.</div>
+      </div>
+      <div class="field">
+        <label for="drumWidth">Inner drum width C</label>
+        <div class="input-wrap"><input id="drumWidth" name="drumWidth" type="number" min="0.1" step="0.1" value="5"><span class="unit">m</span></div>
+        <div class="hint">Inner drum flange width</div>
+      </div>
+      <div class="field">
+        <label for="stowageFactor">Stowage factor</label>
+        <div class="input-wrap"><input id="stowageFactor" name="stowageFactor" type="number" min="0.01" step="0.001" value="1"><span class="unit">x</span></div>
+      </div>
+      <div class="field">
+        <label for="cableLength">Required cable length</label>
+        <div class="input-wrap"><input id="cableLength" name="cableLength" type="number" min="1" step="1" value="3000"><span class="unit">m</span></div>
+      </div>
+      <div class="field">
+        <label for="leadSheaveAngle">Lead sheave fleet angle</label>
+        <div class="input-wrap"><input id="leadSheaveAngle" name="leadSheaveAngle" type="number" min="0.1" max="89" step="0.1" value="1.5"><span class="unit">deg</span></div>
+        <div class="hint">Typical guideline range is 0.5 to 1.5 degrees.</div>
+      </div>
+
+      <div class="buttons">
+        <button class="primary full-row" id="generateReportBtn" type="button">Generate Report PDF</button>
+        <button class="secondary full-row" id="saveProjectBtn" type="button">Save Project</button>
+        <button class="secondary full-row" id="loadProjectBtn" type="button">Load Project</button>
+        <div class="button-row">
+          <button class="danger" id="undoBtn" type="button">Undo</button>
+          <button class="action" id="redoBtn" type="button">Redo</button>
+        </div>
+        <input id="projectFile" type="file" accept=".csv,text/csv" hidden>
+      </div>
+    </div>
+    </form>
+  </section>
+
+  <section class="panel outputs">
+    <span class="section-kicker">Calculated capacity</span><h2>Calculation result</h2>
+    <div class="summary">
+      <div class="metric"><div class="name">Maximum stowed cable length</div><div class="value" id="capacity">-</div></div>
+      <div class="metric"><div class="name">Cable length to be stowed</div><div class="value" id="required">-</div></div>
+      <div class="metric"><div class="name">Stowed layers</div><div class="value" id="layers">-</div></div>
+      <div class="metric"><div class="name">Lead sheave distance</div><div class="value" id="leadDistance">-</div></div>
+    </div>
+    <div class="checks">
+      <span id="fitCheck" class="pill">Cable fit: -</span>
+    </div>
+
+      <div class="canvas-wrap reel-chart-wrap"><canvas id="chart"></canvas></div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+        <tbody id="resultTable"></tbody>
+      </table>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <caption>Length per Layer</caption>
+        <thead>
+          <tr>
+            <th>Layer</th>
+            <th>Centerline height</th>
+            <th>Layer capacity</th>
+            <th>Cable length on layer</th>
+            <th>Cumulative length</th>
+          </tr>
+        </thead>
+        <tbody id="layerTable"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+<footer>
+  <div class="footer-inner">
+    <span class="footer-brand">N-Sea Cable Engineering Tools</span> - Built by Rida. Still evolving, already surprisingly useful. Found a bug or have an idea to make it even better?
+    <a class="footer-contact" href="<%= mailtoLink %>">Drop me a line and let me know.</a>
+  </div>
+</footer>
+
+<script>
+(() => {
+  'use strict';
+  const DEGREE = String.fromCharCode(176);
+  const defaults = {
+    cableOd: 200,
+    outerFlange: 15,
+    unusedArea: 0.5,
+    innerFlange: 5,
+    drumWidth: 5,
+    stowageFactor: 1,
+    cableLength: 3000,
+    leadSheaveAngle: 1.5
+  };
+  const projectDefaults = { projectNameInput: '', projectNumberInput: '', revisionInput: '', authorInput: '' };
+  const engineeringKeys = Object.keys(defaults);
+  const projectKeys = Object.keys(projectDefaults);
+  const inputKeys = [...engineeringKeys, ...projectKeys];
+  let latest = null;
+  let historyIndex = 0;
+  const history = [];
+
+  const $ = id => document.getElementById(id);
+  const inputs = engineeringKeys.map($);
+  const projectInputs = projectKeys.map($);
+
+  function captureState() {
+    return Object.fromEntries(inputKeys.map(key => [key, $(key).value]));
+  }
+
+  function statesMatch(a, b) {
+    return inputKeys.every(key => a && b && a[key] === b[key]);
+  }
+
+  function updateHistoryButtons() {
+    $('undoBtn').disabled = historyIndex <= 0;
+    $('redoBtn').disabled = historyIndex >= history.length - 1;
+  }
+
+  function rememberState() {
+    const state = captureState();
+    if (history[historyIndex] && statesMatch(history[historyIndex], state)) {
+      updateHistoryButtons();
+      return;
+    }
+    history.splice(historyIndex + 1);
+    history.push(state);
+    historyIndex = history.length - 1;
+    updateHistoryButtons();
+  }
+
+  function restoreState(state) {
+    for (const key of inputKeys) $(key).value = state[key] ?? '';
+    calculate();
+    updateHistoryButtons();
+  }
+
+  function readInputs() {
+    const v = {};
+    for (const key of engineeringKeys) v[key] = Number($(key).value);
+    if (!Number.isFinite(v.cableOd) || v.cableOd <= 0) throw new Error('Cable outer diameter must be greater than zero.');
+    if (!Number.isFinite(v.outerFlange) || v.outerFlange <= 0) throw new Error('Outer drum flange height B must be greater than zero.');
+    if (!Number.isFinite(v.unusedArea) || v.unusedArea < 0) throw new Error('Unused top height D cannot be negative.');
+    if (!Number.isFinite(v.innerFlange) || v.innerFlange <= 0) throw new Error('Inner drum height A must be greater than zero.');
+    if (!Number.isFinite(v.drumWidth) || v.drumWidth <= 0) throw new Error('Inner drum width C must be greater than zero.');
+    if (!Number.isFinite(v.stowageFactor) || v.stowageFactor <= 0) throw new Error('Stowage factor must be greater than zero.');
+    if (!Number.isFinite(v.cableLength) || v.cableLength <= 0) throw new Error('Required cable length must be greater than zero.');
+    if (!Number.isFinite(v.leadSheaveAngle) || v.leadSheaveAngle <= 0 || v.leadSheaveAngle >= 90) throw new Error('Lead sheave angle must be between 0 and 90 degrees.');
+    if ((v.outerFlange - v.unusedArea) <= 0) throw new Error('B minus D must be greater than zero.');
+    if ((v.outerFlange - (2 * v.unusedArea)) <= v.innerFlange) throw new Error('Usable storage height after D must be larger than inner drum height A.');
+    if (v.drumWidth < (v.cableOd / 1000)) throw new Error('Inner drum width C must fit at least one cable wrap.');
+    if (((v.outerFlange - (2 * v.unusedArea) - v.innerFlange) / 2) < (v.cableOd / 1000)) throw new Error('Available storage height must fit at least one cable layer.');
+    return v;
+  }
+
+  function calculateReel(v) {
+    const cableOdM = v.cableOd / 1000;
+    const usableLayerHeight = v.outerFlange - (2 * v.unusedArea);
+    const storageHeightEachSide = (usableLayerHeight - v.innerFlange) / 2;
+    const maxNumberLayer = Math.floor(storageHeightEachSide / cableOdM);
+    const wrapsPerLayer = Math.floor(v.drumWidth / cableOdM);
+    const layerCapacityFor = layer => Math.PI * (v.innerFlange + ((2 * layer - 1) * cableOdM)) * wrapsPerLayer / v.stowageFactor;
+    const capacity = Array.from({ length: maxNumberLayer }, (_, i) => layerCapacityFor(i + 1)).reduce((sum, value) => sum + value, 0);
+    let remainingLength = v.cableLength;
+    let layersUsed = 0;
+    let cumulativeLength = 0;
+    const layerData = [];
+
+    for (let layer = 1; layer <= maxNumberLayer; layer++) {
+      const centerlineHeight = v.innerFlange + ((2 * layer - 1) * cableOdM);
+      const layerCapacity = layerCapacityFor(layer);
+      const usedLength = Math.min(layerCapacity, Math.max(0, remainingLength));
+      cumulativeLength += usedLength;
+      remainingLength -= usedLength;
+      if (usedLength > 0) layersUsed = layer;
+      layerData.push({ layer, centerlineHeight, wraps: wrapsPerLayer, layerCapacity, usedLength, cumulativeLength });
+      if (remainingLength <= 0) break;
+    }
+
+    const leadDistance = (v.drumWidth / 2) / Math.tan(v.leadSheaveAngle * Math.PI / 180);
+    const fits = remainingLength <= 0;
+    return {
+      ...v,
+      cableOdM,
+      usableLayerHeight,
+      storageHeightEachSide,
+      maxNumberLayer,
+      wrapsPerLayer,
+      capacity,
+      layers: maxNumberLayer,
+      layersUsed,
+      layerData,
+      remainingLength: Math.max(0, remainingLength),
+      leadDistance,
+      fits,
+      spareLength: capacity - v.cableLength,
+      fillRatio: v.cableLength / capacity
+    };
+  }
+
+  function fmt(n, decimals = 1) {
+    return Number(n).toFixed(decimals);
+  }
+
+  function rows(r) {
+    return [
+      ['Cable outer diameter', `${fmt(r.cableOd, 0)} mm`],
+      ['Stowage factor', `${fmt(r.stowageFactor, 2)} x`],
+      ['Maximum stowed cable length', `${fmt(r.capacity, 0)} m`],
+      ['Cable length to be stowed', `${fmt(r.cableLength, 0)} m`],
+      ['Cable fits in drum', r.fits ? 'Yes' : 'No'],
+      ['Stowed layers', `${fmt(r.layersUsed, 0)} layers`],
+      ['Maximum stowing layer', `${fmt(r.layers, 0)} layers`],
+      ['Lead sheave fleet angle', `${fmt(r.leadSheaveAngle, 1)}${DEGREE}`],
+      ['Minimum lead sheave distance from drum center', `${fmt(r.leadDistance, 2)} m`]
+    ];
+  }
+
+  function layerRows(r) {
+    return r.layerData.map(row => [
+      fmt(row.layer, 0),
+      `${fmt(row.centerlineHeight, 2)} m`,
+      `${fmt(row.layerCapacity, 0)} m`,
+      `${fmt(row.usedLength, 0)} m`,
+      `${fmt(row.cumulativeLength, 0)} m`
+    ]);
+  }
+
+  function updateUI(r) {
+    $('capacity').textContent = `${fmt(r.capacity, 0)} m`;
+    $('required').textContent = `${fmt(r.cableLength, 0)} m`;
+    $('layers').textContent = `${fmt(r.layersUsed, 0)}`;
+    $('leadDistance').textContent = `${fmt(r.leadDistance, 2)} m`;
+    const fitDelta = r.fits ? `${fmt(r.spareLength, 0)} m spare` : `${fmt(Math.abs(r.spareLength), 0)} m short`;
+    setPill($('fitCheck'), r.fits, `Cable fit: ${r.fits ? 'OK' : 'NOT OK'} (${fitDelta})`);
+    $('resultTable').innerHTML = rows(r).map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join('');
+    $('layerTable').innerHTML = layerRows(r).map(row => `<tr>${row.map(value => `<td>${value}</td>`).join('')}</tr>`).join('');
+    drawChart(r);
+  }
+
+  function setPill(el, ok, text) {
+    el.textContent = text;
+    el.className = `pill ${ok ? 'ok' : 'bad'}`;
+  }
+
+  function drawChart(r) {
+    const canvas = $('chart');
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.max(1, Math.round(rect.width * dpr));
+    canvas.height = Math.max(1, Math.round(rect.height * dpr));
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const W = rect.width;
+    const H = rect.height;
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, W, H);
+
+    const top = 58;
+    const bottom = H - 72;
+    const left = 120;
+    const right = W - 120;
+    const flangeW = 18;
+    const axisY = (top + bottom) / 2;
+    const scaleY = (bottom - top) / r.outerFlange;
+    const scaleX = (right - left) / r.drumWidth;
+    const innerTop = axisY - (r.innerFlange * scaleY / 2);
+    const innerBottom = axisY + (r.innerFlange * scaleY / 2);
+    const usableTop = top + (r.unusedArea * scaleY);
+    const usableBottom = bottom - (r.unusedArea * scaleY);
+    function line(x1, y1, x2, y2, color = '#29378A', width = 2) {
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+    }
+    function label(text, x, y, align = 'center') {
+      ctx.fillStyle = '#29378A';
+      ctx.font = '800 13px Arial';
+      ctx.textAlign = align;
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, x, y);
+    }
+    function dimV(x, y1, y2, text, side = 'right', labelOffset = 22) {
+      line(x, y1, x, y2, '#4F566B', 1.5);
+      line(x - 5, y1, x + 5, y1, '#4F566B', 1.5);
+      line(x - 5, y2, x + 5, y2, '#4F566B', 1.5);
+      const isLeftSide = side === 'left';
+      label(
+        text,
+        x + (isLeftSide ? -labelOffset : labelOffset),
+        (y1 + y2) / 2,
+        isLeftSide ? 'right' : 'left'
+      );
+    }
+    function dimH(x1, x2, y, text) {
+      line(x1, y, x2, y, '#4F566B', 1.5);
+      line(x1, y - 5, x1, y + 5, '#4F566B', 1.5);
+      line(x2, y - 5, x2, y + 5, '#4F566B', 1.5);
+      label(text, (x1 + x2) / 2, y + 18);
+    }
+
+    ctx.fillStyle = '#F3F5FB';
+    ctx.fillRect(left, top, right - left, bottom - top);
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(left, innerTop, right - left, innerBottom - innerTop);
+
+    ctx.fillStyle = '#29378A';
+    ctx.fillRect(left - flangeW, top, flangeW, bottom - top);
+    ctx.fillRect(right, top, flangeW, bottom - top);
+
+    line(left, innerTop, right, innerTop, '#29378A', 3);
+    line(left, innerBottom, right, innerBottom, '#29378A', 3);
+    ctx.fillStyle = r.fits ? '#EAF4ED' : '#F8EAEA';
+    ctx.fillRect(left, usableTop, right - left, innerTop - usableTop);
+    ctx.fillRect(left, innerBottom, right - left, usableBottom - innerBottom);
+
+    line(left, top, left, bottom, '#29378A', 1.5);
+    line(right, top, right, bottom, '#29378A', 1.5);
+    line(left, usableTop, right, usableTop, '#FFF000', 3);
+    line(left, usableBottom, right, usableBottom, '#FFF000', 3);
+
+    dimV(left - 38, top, bottom, `B ${fmt(r.outerFlange, 2)} m`, 'left', 12);
+    dimV(right + 28, innerTop, innerBottom, `A ${fmt(r.innerFlange, 2)} m`, 'right', 10);
+    dimV(right + 12, top, usableTop, `D ${fmt(r.unusedArea, 2)} m`, 'right', 10);
+    dimH(left, right, bottom + 8, `C ${fmt(r.drumWidth, 2)} m`);
+
+    ctx.fillStyle = '#29378A';
+    ctx.font = '800 17px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText('Drum Winch Side View', W / 2, 14);
+
+  }
+
+  function calculate() {
+    try {
+      $('error').style.display = 'none';
+      latest = calculateReel(readInputs());
+      updateUI(latest);
+    } catch (e) {
+      $('error').textContent = e.message;
+      $('error').style.display = 'block';
+    }
+  }
+
+  function download(filename, content, type) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([content], { type }));
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, char => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[char]));
+  }
+
+  function projectMeta() {
+    return {
+      projectName: $('projectNameInput').value.trim(),
+      projectNumber: $('projectNumberInput').value.trim(),
+      revision: $('revisionInput').value.trim(),
+      author: $('authorInput').value.trim()
+    };
+  }
+
+  function reportFileTitle(meta, fallback) {
+    return [meta.projectNumber, meta.projectName, meta.revision]
+      .map(value => String(value ?? '').trim())
+      .filter(Boolean)
+      .join(' - ') || fallback;
+  }
+
+  function generatePdfReport() {
+    let report;
+    try {
+      $('error').style.display = 'none';
+      report = calculateReel(readInputs());
+      latest = report;
+      updateUI(report);
+    } catch (e) {
+      $('error').textContent = e.message;
+      $('error').style.display = 'block';
+      return;
+    }
+
+    const meta = projectMeta();
+    const pdfTitle = reportFileTitle(meta, 'Reel Drive Stowage Report');
+    const generated = new Date().toISOString().slice(0, 10);
+    const logoHtml = document.querySelector('.brand-logo')?.outerHTML ?? '';
+    const chartImage = $('chart').toDataURL('image/png');
+    const detailRows = rows(report);
+    const layerDetailRows = layerRows(report);
+    const summary = [
+      ['Maximum stowed cable length', `${fmt(report.capacity, 0)} m`],
+      ['Cable length to be stowed', `${fmt(report.cableLength, 0)} m`],
+      ['Stowed layers', `${fmt(report.layersUsed, 0)}`],
+      ['Lead sheave distance', `${fmt(report.leadDistance, 2)} m`]
+    ];
+    const reportWindow = window.open('', '_blank');
+    if (!reportWindow) {
+      alert('Please allow pop-ups to generate the PDF report.');
+      return;
+    }
+
+    reportWindow.document.write(`
+      <!doctype html>
+      <html>
+        <head>
+          <title>${escapeHtml(pdfTitle)}</title>
+          <style>
+            * { box-sizing: border-box; }
+            body { font-family: Calibri, Arial, sans-serif; color: #000; margin: 18px; background: #d9d9d9; }
+            .page { width: 210mm; min-height: 297mm; margin: 0 auto; padding: 14mm; background: #fff; }
+            .title { position: relative; display: flex; align-items: center; justify-content: center; min-height: 82px; background: #142968; color: #fff; font-size: 20px; font-weight: 700; text-align: center; padding: 12px 80px; }
+            .report-logo-wrap { position: absolute; left: 18px; top: 9px; display: flex; align-items: center; justify-content: center; width: 54px; height: 64px; background: #fff; }
+            .report-logo-wrap img { width: 34px; height: auto; display: block; }
+            table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+            th, td { border: 1px solid #d0d0d0; padding: 4px 5px; vertical-align: middle; overflow-wrap: anywhere; font-size: 9px; }
+            th { background: #142968; color: #fff; font-weight: 700; text-align: center; }
+            td { background: #f2f2f2; text-align: center; }
+            .meta { margin-top: 8px; }
+            .meta th { width: 22%; background: #d9d9d9; color: #000; text-align: left; }
+            .meta td { text-align: left; }
+            h2 { margin: 10px 0 5px; color: #142968; font-size: 14px; }
+            .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 10px 0; }
+            .card { border: 1px solid #d0d0d0; background: #f2f2f2; padding: 8px; min-height: 48px; }
+            .card span { display: block; color: #555; font-size: 8px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+            .card strong { display: block; margin-top: 5px; color: #142968; font-size: 15px; }
+            .chart { display: block; width: 100%; max-height: 280px; object-fit: contain; border: 1px solid #d0d0d0; margin-top: 5px; }
+            .ok { color: #142968; font-weight: 700; }
+            .bad { color: #c9221c; font-weight: 700; }
+            @page { size: A4 portrait; margin: 10mm; }
+            @media print { body { margin: 0; background: #fff; } .page { width: auto; min-height: auto; padding: 0; } }
+          </style>
+        </head>
+        <body>
+          <div class="page">
+            <div class="title"><span class="report-logo-wrap">${logoHtml}</span><span>Reel Drive Stowage Report</span></div>
+            <table class="meta">
+              <tr><th>Project</th><td>${escapeHtml(meta.projectName)}</td><th>Project number</th><td>${escapeHtml(meta.projectNumber)}</td></tr>
+              <tr><th>Revision</th><td>${escapeHtml(meta.revision)}</td><th>Date</th><td>${escapeHtml(generated)}</td></tr>
+              <tr><th>Originator</th><td>${escapeHtml(meta.author)}</td><th>Status</th><td class="${report.fits ? 'ok' : 'bad'}">${report.fits ? 'OK' : 'NOT OK'}</td></tr>
+            </table>
+            <div class="summary">
+              ${summary.map(([label, value]) => `<div class="card"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join('')}
+            </div>
+            <h2>Calculation Details</h2>
+            <table><tbody>${detailRows.map(([label, value]) => `<tr><th>${escapeHtml(label)}</th><td>${escapeHtml(value)}</td></tr>`).join('')}</tbody></table>
+            <h2>Drum Side View</h2>
+            <img class="chart" src="${chartImage}" alt="Reel drive drum side view">
+            <h2>Length per Layer</h2>
+            <table>
+              <thead><tr><th>Layer</th><th>Centerline height</th><th>Layer capacity</th><th>Cable length on layer</th><th>Cumulative length</th></tr></thead>
+              <tbody>${layerDetailRows.map(row => `<tr>${row.map(value => `<td>${escapeHtml(value)}</td>`).join('')}</tr>`).join('')}</tbody>
+            </table>
+          </div>
+          <script>window.addEventListener('load', () => window.print());<\/script>
+        </body>
+      </html>
+    `);
+    reportWindow.document.close();
+  }
+
+  function parseCsvLine(line) {
+    const cells = [];
+    let value = '';
+    let quoted = false;
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      if (char === '"') {
+        if (quoted && line[i + 1] === '"') {
+          value += '"';
+          i++;
+        } else {
+          quoted = !quoted;
+        }
+      } else if (char === ',' && !quoted) {
+        cells.push(value);
+        value = '';
+      } else {
+        value += char;
+      }
+    }
+    cells.push(value);
+    return cells;
+  }
+
+  $('saveProjectBtn').addEventListener('click', () => {
+    try {
+      const values = readInputs();
+      const escapeCsv = value => `"${String(value).replaceAll('"', '""')}"`;
+      const csv = [
+        'Field,Value',
+        ...engineeringKeys.map(key => [key, values[key]].map(escapeCsv).join(',')),
+        ...projectKeys.map(key => [key, $(key).value].map(escapeCsv).join(','))
+      ].join('\n');
+      download('reel_drive_project.csv', csv, 'text/csv');
+    } catch (e) {
+      $('error').textContent = e.message;
+      $('error').style.display = 'block';
+    }
+  });
+
+  $('generateReportBtn').addEventListener('click', generatePdfReport);
+  $('loadProjectBtn').addEventListener('click', () => $('projectFile').click());
+  $('projectFile').addEventListener('change', event => {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const lines = String(reader.result).split(/\r?\n/).filter(Boolean);
+        for (const line of lines.slice(1)) {
+          const [key, value] = parseCsvLine(line);
+          if (inputKeys.includes(key) && value !== undefined) {
+            $(key).value = value;
+          }
+        }
+        rememberState();
+        calculate();
+      } catch (e) {
+        $('error').textContent = 'Unable to load project CSV.';
+        $('error').style.display = 'block';
+      } finally {
+        event.target.value = '';
+      }
+    };
+    reader.readAsText(file);
+  });
+  $('undoBtn').addEventListener('click', () => {
+    if (historyIndex <= 0) return;
+    historyIndex--;
+    restoreState(history[historyIndex]);
+  });
+  $('redoBtn').addEventListener('click', () => {
+    if (historyIndex >= history.length - 1) return;
+    historyIndex++;
+    restoreState(history[historyIndex]);
+  });
+  inputs.forEach(el => el.addEventListener('input', () => {
+    rememberState();
+    calculate();
+  }));
+  projectInputs.forEach(el => el.addEventListener('input', rememberState));
+  document.querySelectorAll('.tab-button').forEach(button => {
+    button.addEventListener('click', () => {
+      document.querySelectorAll('.tab-button').forEach(item => {
+        const active = item === button;
+        item.classList.toggle('is-active', active);
+        item.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+      document.querySelectorAll('.tab-panel').forEach(panel => {
+        panel.classList.toggle('is-active', panel.id === button.dataset.tabTarget);
+      });
+    });
+  });
+  window.addEventListener('resize', () => latest && drawChart(latest));
+  history.push(captureState());
+  updateHistoryButtons();
+  calculate();
+})();
+</script>
+</body>
+</html>

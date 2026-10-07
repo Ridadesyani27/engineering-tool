@@ -1,0 +1,22 @@
+# Secrets. Real values live only on the server.
+.env
+.env.*
+!.env.example
+
+# Dependencies — installed by the Dockerfile with `npm ci --omit=dev`
+node_modules/
+
+# Generated reports. The app writes these at runtime and creates the directory
+# itself on boot (server.js), so it must NOT be tracked: a deploy does
+# `git reset --hard`, which would delete reports that are still being downloaded.
+pdf/
+
+# Local backups of this directory
+*.bak-*
+*.tar.gz
+combined-calculation-backup-before-js-conversion.zip
+
+# Noise
+*.log
+npm-debug.log*
+.DS_Store

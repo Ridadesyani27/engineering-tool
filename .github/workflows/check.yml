@@ -1,0 +1,59 @@
+name: Checks
+
+# Runs syntax checks, calculation and rendering tests, and EJS compilation.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Runs as the host user, not root. The container mounts the runner workspace, and
+# anything root writes there — npm's node_modules in particular — cannot be removed
+# afterwards by actions/checkout's cleanup, which then fails the job with EACCES on
+# unlink. HOME=/tmp because npm needs a writable home and the host user has none
+# inside the container.
+jobs:
+  check:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Syntax-check every JavaScript file
+        run: |
+          set -euo pipefail
+          sg docker -c "docker run --rm --user $(id -u):$(id -g) -e HOME=/tmp \
+            -v '$PWD':/app -w /app node:20-alpine sh -c '
+            set -e
+            for f in server.js auth.js routes/*.js lib/*.js; do node --check \"\$f\"; done
+            echo \"syntax OK\"'"
+
+      - name: Install dependencies for tests and view checks
+        run: |
+          set -euo pipefail
+          sg docker -c "docker run --rm --user $(id -u):$(id -g) -e HOME=/tmp \
+            -v '$PWD':/app -w /app node:20-alpine npm ci --omit=dev"
+
+      - name: Solver and rendering tests
+        run: |
+          set -euo pipefail
+          # node:test covers the engineering maths and renders warning templates
+          # using the application dependencies installed in the previous step.
+          sg docker -c "docker run --rm --user $(id -u):$(id -g) -e HOME=/tmp \
+            -v '$PWD':/app -w /app node:20-alpine node --test test/"
+
+      - name: Every EJS view must compile
+        run: |
+          set -euo pipefail
+          # A broken template only fails when somebody opens that page, which is a bad
+          # place to find out. Compiling is not rendering, but it catches the typos.
+          sg docker -c "docker run --rm --user $(id -u):$(id -g) -e HOME=/tmp \
+            -v '$PWD':/app -w /app node:20-alpine sh -c '
+            node -e \"
+              const ejs=require(\\\"ejs\\\"), fs=require(\\\"fs\\\");
+              let n=0;
+              for (const f of fs.readdirSync(\\\"views\\\")) {
+                if (!f.endsWith(\\\".ejs\\\")) continue;
+                ejs.compile(fs.readFileSync(\\\"views/\\\"+f, \\\"utf8\\\"), {filename: \\\"views/\\\"+f});
+                n++;
+              }
+              console.log(n + \\\" views compile\\\");
+            \"'"

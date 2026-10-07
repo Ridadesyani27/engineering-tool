@@ -1,0 +1,47 @@
+name: engineering-tools
+
+x-logging: &default-logging
+  driver: "journald"
+  options:
+    tag: "engtools-{{.Name}}"
+
+services:
+  app:
+    build: .
+    container_name: engtools-app
+    restart: unless-stopped
+    logging: *default-logging
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+    volumes:
+      # Generated reports are also archived on disk; a directory mount (not a
+      # single-file mount) so the app can write and rotate files freely.
+      - ./pdf:/app/pdf
+    expose:
+      - "3000"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - engtools
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: engtools-cloudflared
+    restart: unless-stopped
+    logging: *default-logging
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+    env_file: .env
+    depends_on:
+      - app
+    networks:
+      - engtools
+
+networks:
+  engtools:
+    driver: bridge

@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carousel Stowage Calculation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,300;0,400;0,700;0,900;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="nseastyle.css">
+  <link rel="stylesheet" href="carousel.css">
+  <style>
+    .calc-main { display: block; }
+    .calc-form { display: block; }
+    .carousel-workbench { display: grid; gap: 18px; }
+    .two-col { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .form-actions-row { display: flex; justify-content: flex-end; margin: 16px 0; }
+    .input-group-title { margin: 24px 0 12px; color: var(--brand-blue); font-size: .93rem; font-weight: 900; text-transform: uppercase; }
+    .cable-input-table input, .cable-input-table select { min-width: 116px; padding: 9px 10px; font-size: .84rem; text-align: center; }
+    .cable-input-table input[name$="[name]"] { min-width: 170px; }
+    .cable-input-table input[type="color"] { width: 52px; min-width: 52px; height: 38px; padding: 3px; }
+    #vesselDataTable input { min-width: 84px; padding: 8px 9px; font-size: .84rem; text-align: center; }
+    #vesselDataTable input[name$="[vessel_name]"],
+    #vesselDataTable input[name$="[carousel_mode]"] { min-width: 132px; }
+    #vesselDataTable input[name$="[partition]"] { min-width: 110px; }
+    .vessel-editor { display: none; }
+    .vessel-editor.is-open { display: block; }
+    .vessel-standard.is-hidden { display: none; }
+    .vessel-editor-actions { display: flex; justify-content: flex-end; gap: 8px; margin: 18px 0; }
+    #customVesselRows input { min-width: 118px; padding: 8px 9px; font-size: .84rem; text-align: center; }
+    .recent-query-box { margin-top: 22px; border: 1px solid var(--border); border-top: 4px solid var(--brand-yellow); padding: 14px; background: #FFFFFF; }
+    .recent-query-head { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 10px; }
+    .recent-query-head h3 { margin: 0; color: var(--brand-blue); font-size: .98rem; font-weight: 900; }
+    .recent-query-empty { border-left: 4px solid var(--brand-yellow); padding: 10px 12px; background: #F7F7F7; color: var(--muted); font-size: .82rem; font-weight: 700; }
+    .result-summary-warning { margin-bottom: 10px; padding: 10px 12px; border-left: 4px solid #B8241A; background: #FFE7E4; color: #B8241A; font-weight: 900; }
+    .crush-warning-caution { border-left-color: #9A6700; background: #FFF4CE; color: #795100; }
+    .crush-utilization-caution { background: #FFF4CE !important; color: #795100; font-weight: 900; }
+    #panel-vessel table th, #panel-vessel table td { text-align: center; vertical-align: middle; }
+    .result-summary-table { min-width: 760px; }
+    .result-summary-section { margin-bottom: 18px; }
+    .result-summary-section h3 { color: var(--brand-blue); font-size: 1.1rem; margin: 0 0 8px; }
+    .result-summary-table-wrap { overflow-x: auto; }
+    .result-summary-table th,
+    .result-summary-table td { text-align: center; }
+    .result-summary-table td:first-child { text-align: left; font-weight: 900; }
+    .result-total-row td { border-top: 2px solid #000; font-weight: 900; }
+    .result-name-column { width: 210px; }
+    .result-group-start { border-left: 2px solid #000 !important; }
+    .result-alert-cell { background: #FFE7E4 !important; color: #B8241A; font-weight: 900; }
+    .status-pill { display: inline-block; padding: 4px 8px; background: #E6F6EC; color: #176B3A; font-size: .72rem; font-weight: 900; text-transform: uppercase; }
+    .status-pill.not-ok { background: #FFE7E4; color: #B8241A; }
+    .layer-map { display: grid; grid-template-columns: 78px minmax(0, 1fr); gap: 12px; border: 1px solid var(--border); border-top: 6px solid var(--brand-yellow); padding: 14px; background: #FFFFFF; overflow-x: auto; }
+    .layer-map-side { display: grid; grid-template-rows: 62px minmax(0, 1fr); color: var(--brand-blue); text-align: center; font-weight: 800; }
+    .layer-map-axis-title { display: grid; place-items: center; color: var(--brand-blue); font-size: .74rem; font-weight: 900; text-transform: uppercase; }
+    .layer-map-axis { display: grid; grid-template-rows: repeat(var(--layer-count, 1), minmax(34px, auto)); gap: 6px; }
+    .layer-axis-label { display: grid; place-items: center; min-height: 34px; color: var(--brand-blue); font-size: .78rem; font-weight: 900; }
+    .layer-map-main { min-width: 820px; }
+    .layer-map-header, .layer-map-row { display: grid; grid-template-columns: repeat(var(--partition-count, 3), minmax(180px, 1fr)); }
+    .layer-map-header { gap: 6px; margin-bottom: 8px; }
+    .layer-map-heading { display: grid; place-items: center; min-height: 54px; border: 1px solid var(--border); border-top: 4px solid var(--brand-yellow); background: var(--brand-blue-pale); color: var(--brand-blue); font-size: .98rem; font-weight: 900; text-align: center; }
+    .layer-map-row { min-height: 34px; gap: 6px; margin-bottom: 6px; }
+    .layer-map-cell { position: relative; display: grid; align-items: stretch; min-height: 34px; border: 1px solid #D9DCE6; background: #F7F9FC; }
+    .layer-map-track { display: flex; align-items: stretch; width: var(--fill, 0%); min-width: 0; height: 100%; overflow: hidden; box-shadow: 0 0 0 1px rgba(6, 40, 100, .08); }
+    .layer-map-entry { position: relative; display: grid; place-items: center; min-width: 0; min-height: 32px; padding: 3px 6px; border-right: 1px solid rgba(255,255,255,.65); color: #FFFFFF; font-size: .76rem; font-weight: 800; line-height: 1.15; text-align: center; overflow: hidden; }
+    .layer-map-entry-label { position: absolute; left: 50%; top: 50%; z-index: 2; transform: translate(-50%, -50%); max-width: calc(100% - 8px); padding: 2px 7px; background: rgba(255,255,255,.86); color: var(--brand-blue); font-size: .72rem; font-weight: 900; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: 0 0 0 1px rgba(6,40,100,.08); pointer-events: none; }
+    .length-empty { padding: 18px; border-left: 4px solid var(--brand-yellow); background: #F7F7F7; color: var(--muted); font-weight: 700; }
+    .graph-card { border: 1px solid var(--border); padding: 18px; background: #FFFFFF; }
+    .graph-card h3 { margin: 0 0 14px; color: var(--brand-blue); font-size: 1rem; font-weight: 900; }
+    .graph-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
+    .carousel-plan { width: 100%; max-width: 960px; margin: 0 auto; border: 1px solid var(--border); border-top: 6px solid var(--brand-yellow); padding: 14px; background: #FFFFFF; }
+    .carousel-plan-header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+    .carousel-plan-title { color: var(--brand-blue); font-size: .98rem; font-weight: 900; }
+    .carousel-plan-subtitle { color: var(--muted); font-size: .76rem; font-weight: 700; text-align: right; }
+    .carousel-svg-wrap { display: grid; place-items: center; aspect-ratio: 1 / 1; border: 1px solid var(--border); background: var(--brand-blue-pale); overflow: hidden; }
+    .carousel-svg-wrap svg { display: block; width: 100%; height: 100%; }
+    @media (max-width: 760px) { .two-col { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body class="is-carousel">
+<% const esc = value => String(value ?? ''); %>
+<% const fmt = (value, digits = 1, suffix = '') => Number.isFinite(Number(value)) ? Number(value).toLocaleString('en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits }) + suffix : '-'; %>
+<% const titleCase = value => String(value || '').charAt(0).toUpperCase() + String(value || '').slice(1); %>
+<% const partitions = result.vesselRows.map(row => row.Partition); %>
+<% const icon = (name, className = 'button-icon') => {
+  const icons = {
+    run: `<svg class="${className}" viewBox="0 0 16 16" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M6 11l5-3-5-3v6zM8 14.6A6.6 6.6 0 1 1 8 1.4a6.6 6.6 0 0 1 0 13.2zM8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0z"/></svg>`,
+    export: `<svg class="${className}" viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M5 20h14a1 1 0 0 0 1-1V8h-5a2 2 0 0 1-2-2V2H5a1 1 0 0 0-1 1v7h2V4h5v2a4 4 0 0 0 4 4h3v8H6v-3H4v4a1 1 0 0 0 1 1z"/><path fill="currentColor" d="M9 9 4 14l5 5v-3h6v-4H9V9z"/></svg>`,
+    load: `<svg class="${className}" viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path fill="none" stroke="currentColor" stroke-width="1.8" d="M3 8V6.5A2.5 2.5 0 0 1 5.5 4H10l2 2h6.5A2.5 2.5 0 0 1 21 8v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8z"/><path fill="none" stroke="currentColor" stroke-width="1.8" d="M3 9h18l-2 9H5L3 9z"/></svg>`,
+    pdf: `<svg class="${className}" viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path fill="none" stroke="currentColor" stroke-width="1.8" d="M6 2h8l4 4v16H6V2z"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M14 2v5h5M9 13h6M9 17h6"/></svg>`,
+    manual: `<svg class="${className}" viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path fill="none" stroke="currentColor" stroke-width="1.8" d="M4 4.5A2.5 2.5 0 0 1 6.5 2H11v17H6.5A2.5 2.5 0 0 0 4 21.5v-17zM20 4.5A2.5 2.5 0 0 0 17.5 2H13v17h4.5a2.5 2.5 0 0 1 2.5 2.5v-17z"/></svg>`,
+    clear: `<svg class="${className}" viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M4 7h16M9 7V4h6v3m-8 3 1 10h8l1-10"/></svg>`,
+    add: `<svg class="${className}" viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 5v14M5 12h14"/></svg>`,
+    remove: `<svg class="${className}" viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="m9 9 6 6m0-6-6 6"/></svg>`,
+    'project-tab': `<svg class="${className}" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 9a7 7 0 0 1 14 0H5z"/></svg>`,
+    'vessel-tab': `<svg class="${className}" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 17.5 3 12l9-3 9 3-1 5.5M5 11.3V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4.3M2 21c1 1 4 1 6-1 2 2 6 2 8 0 2 2 5 2 6 1"/></svg>`,
+    'cable-tab': `<svg class="${className}" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 3v4m0 10v4m9-9h-4M7 12H3"/></svg>`,
+    'stowage-tab': `<svg class="${className}" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="m4 9 8-4 8 4-8 4-8-4zm0 4 8 4 8-4m-16 4 8 4 8-4"/></svg>`,
+    'layer-tab': `<svg class="${className}" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="m12 3 9 5-9 5-9-5 9-5zm-7 9 7 4 7-4 2 1-9 5-9-5 2-1zm0 5 7 4 7-4 2 1-9 5-9-5 2-1z"/></svg>`,
+    'wrap-tab': `<svg class="${className}" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 12c1-.4.7-1.8 0-2.4-1.1-.9-2.7-.4-3.4.8-1.5 2.4.9 5 3.4 4.9 2.7-.2 4.3-2.9 3.7-5.4-.7-3-3.9-4.5-6.7-3.6-2.6.8-4.2 3.5-4 6.2.3 3 2.6 5.4 5.5 5.9 4 .7 8.4-2.4 8.4-7.2"/></svg>`
+  };
+  return icons[name] || '';
+}; %>
+<%
+const summaryByPartition = Object.fromEntries(result.summary.map(row => [row.Partition, row]));
+const crushByPartition = Object.fromEntries(result.crushSummary.map(row => [row.Partition, row]));
+const cableTypeByName = Object.fromEntries((input.cables || []).map(cable => [String(cable.name || ''), String(cable.type || '')]));
+const vesselByPartition = Object.fromEntries((result.vesselRows || []).map(row => [row.Partition, row]));
+const reportCableTypes = (input.cable_types || []).map(type => {
+  const lengths = Object.fromEntries(partitions.map(partition => [partition, 0]));
+  (input.cables || []).forEach(cable => {
+    if (String(cable.type || '').toLowerCase() === String(type.name || '').toLowerCase()) {
+      const partition = String(cable.partition || '').toLowerCase();
+      if (lengths[partition] !== undefined) lengths[partition] += Number(cable.length || 0);
+    }
+  });
+  const totalLength = Object.values(lengths).reduce((sum, length) => sum + length, 0);
+  return { ...type, partitions: lengths, total_length: totalLength, total_weight: totalLength * Number(type.unit_weight || 0) / 1000 };
+});
+const reportPartitionTotals = Object.fromEntries(partitions.map(partition => [partition, reportCableTypes.reduce((sum, type) => sum + (type.partitions[partition] || 0), 0)]));
+const reportTotalProjectLength = reportCableTypes.reduce((sum, type) => sum + type.total_length, 0);
+const reportTotalProjectWeight = reportCableTypes.reduce((sum, type) => sum + type.total_weight, 0);
+const totalWeightStowed = result.summary.reduce((sum, row) => sum + Number(row.Total_weight || 0), 0);
+const totalLengthStowed = result.summary.reduce((sum, row) => sum + Number(row.Total_length_stowed || 0), 0);
+const totalInitialLength = result.summary.reduce((sum, row) => sum + Number(row['Initial_cable_length [m]'] || 0), 0);
+const reportSharedCapacity = Math.max(0, ...result.vesselRows.map(row => Number(row['Total Weight Capacity'] || row['Carousel_capacity [t]'] || row['Weight Capacity'] || 0)));
+const reportMaxLayers = Math.max(0, ...result.summary.map(row => Number(row.Max_layer || 0)));
+const totalMaxElevationTop = Math.max(0, ...result.summary.map(row => Number(row.Max_elevation_top || 0)));
+const totalCarouselHeightUsed = Math.max(0, ...result.summary.map(row => Number(row.Carousel_height || 0)));
+const totalWeightForCog = result.summary.reduce((sum, row) => sum + Number(row.Total_weight || 0), 0);
+const totalCogZ = totalWeightForCog > 0 ? result.summary.reduce((sum, row) => sum + Number(row.CoG_z || 0) * Number(row.Total_weight || 0), 0) / totalWeightForCog : null;
+const warningMessages = result.summary.filter(row => row.Stop_reason).map(row => `${row.Stop_reason} for ${titleCase(row.Partition)} Partition`);
+const crushWarningRows = {};
+result.detailed.forEach(row => {
+  const utilization = row['Crush_utilization [%]'];
+  if (utilization > 90 && (!crushWarningRows[row.Partition] || utilization > crushWarningRows[row.Partition]['Crush_utilization [%]'])) {
+    crushWarningRows[row.Partition] = row;
+  }
+});
+const crushWarnings = Object.values(crushWarningRows).map(row => {
+  const exceeded = row['Crush_utilization [%]'] > 100;
+  return {
+    exceeded,
+    message: `${exceeded ? 'NOT OK: Allowable crush load exceeded' : 'WARNING: Crush-load utilization exceeds 90%'} in ${titleCase(row.Partition)} Partition, Layer ${row['Layer Actual']}: ${fmt(row['Crush_utilization [%]'], 1, '%')} utilization (dynamic load ${fmt(row['Dynamic_crush_load [kN/m]'], 2)} kN/m; allowable ${fmt(row['Allowable_crush_load [kN/m]'], 2)} kN/m).`
+  };
+});
+const crushUtilizationClass = value => value > 100 ? 'result-alert-cell' : value > 90 ? 'crush-utilization-caution' : '';
+const heightWarningPartitions = Object.fromEntries(result.summary.filter(row => String(row.Stop_reason || '').toLowerCase().includes('height limit reached')).map(row => [row.Partition, true]));
+const cableTypeColorMap = Object.fromEntries((input.cable_types || []).map(type => [String(type.name || '').trim().toLowerCase(), String(type.color || '#29378A')]));
+const cableColorMap = Object.fromEntries((input.cables || []).map(cable => [
+  String(cable.name || '').trim(),
+  cableTypeColorMap[String(cable.type || '').trim().toLowerCase()] || '#29378A'
+]));
+const layerMapOrder = { inner: 0, middle: 1, outer: 2, single: 3 };
+const layerMapPartitions = Object.keys(graphData.partitions || {}).sort((a, b) => (layerMapOrder[a] ?? 99) - (layerMapOrder[b] ?? 99) || a.localeCompare(b));
+const layerMapMaxLayer = layerMapPartitions.reduce((max, partition) => Math.max(max, ...Object.keys(graphData.partitions[partition]?.layers || {}).map(Number)), 0);
+const layerMapReferenceLengths = Object.fromEntries(layerMapPartitions.map(partition => {
+  const maxLayerTotal = Math.max(...Object.values(graphData.partitions[partition]?.layers || {}).map(layer => Object.values(layer.cables || {}).reduce((sum, value) => sum + Number(value || 0), 0)), 0);
+  return [partition, maxLayerTotal || 1];
+}));
+const defaultGraphPartition = layerMapPartitions.includes('outer') ? 'outer' : (layerMapPartitions[0] || '');
+const activeTab = ['project', 'vessel', 'cable', 'results', 'graphs', 'details'].includes(input.active_tab) ? input.active_tab : (submitted ? 'results' : 'project');
+%>
+<header>
+  <div class="brand-row">
+    <div class="brand-left">
+      <div class="brand-logo-wrap"><img class="brand-logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzOSIgaGVpZ2h0PSI3NCIgdmlld0JveD0iMCAwIDM5IDc0IiBmaWxsPSJub25lIj48ZyBjbGlwLXBhdGg9InVybCgjY2xpcDBfMTE0XzQ2OSkiPjxwYXRoIGQ9Ik0xOS4zMTk3IDBDMjkuOTg5NyAwIDM4LjQ2OTcgNy4yMzk5OSAzOC40Njk3IDE4LjI3VjUyLjQ3SDI4LjMwOTdWMTguNjlDMjguMzA5NyAxMi42OSAyNC43OTk3IDkuMTEwMDIgMTkuMzA5NyA5LjExMDAyQzEzLjgxOTcgOS4xMTAwMiAxMC4yNDk3IDEyLjY5IDEwLjI0OTcgMTguNjlWNTIuNTJIMC4xNzk2ODhWMTguMzJDMC4xNzk2ODggNy4zMjAwMSA4LjY0OTcgMC4wNDk5ODc4IDE5LjMxOTcgMC4wNDk5ODc4IiBmaWxsPSIjRkZFRTAyIj48L3BhdGg+PHBhdGggZD0iTTUgNzMuMTg5NUM0LjA3MDY1IDczLjI0NTYgMy4xNDA0IDczLjA5NTUgMi4yNzU5NCA3Mi43NDk3QzEuNDExNDggNzIuNDAzOSAwLjYzNDI1IDcxLjg3MTEgMCA3MS4xODk1TDAuNzk5OTg4IDcwLjM4OTVDMS4zMjg0MyA3MC45ODk0IDEuOTg2OTUgNzEuNDYwNyAyLjcyNTIyIDcxLjc2NzVDMy40NjM0OSA3Mi4wNzQyIDQuMjYyMDMgNzIuMjA4MyA1LjA2IDcyLjE1OTVDNy40MyA3Mi4xNTk1IDguOTI5OTkgNzEuMDE5NSA4LjkyOTk5IDY5LjA1OTVDOC45NTE1NiA2OC42Njg4IDguODg4NiA2OC4yNzggOC43NDUzNiA2Ny45MTM5QzguNjAyMTIgNjcuNTQ5NyA4LjM4MjAyIDY3LjIyMDggOC4xMDAwNCA2Ni45NDk1QzcuNDgyMTkgNjYuNDU1MyA2LjcyMDc4IDY2LjE3NDYgNS45Mjk5OSA2Ni4xNDk1TDQuMTc5OTkgNjUuODY5NUMzLjIwMjYgNjUuNzYyOCAyLjI3NDQyIDY1LjM4NTMgMS41IDY0Ljc3OTVDMS4xMDMxOSA2NC40Mzk0IDAuNzg5NiA2NC4wMTI5IDAuNTgzMzEzIDYzLjUzMjdDMC4zNzcwMjUgNjMuMDUyNSAwLjI4MzUyMiA2Mi41MzE0IDAuMzA5OTk4IDYyLjAwOTVDMC4zMDk5OTggNTkuNDk5NSAyLjExMDA0IDU3Ljg4OTUgNC45ODAwNCA1Ny44ODk1QzUuNzc0MTIgNTcuODU3NyA2LjU2NjQ4IDU3Ljk4NTYgNy4zMTAyNCA1OC4yNjU2QzguMDU0IDU4LjU0NTYgOC43MzQgNTguOTcxOSA5LjMxIDU5LjUxOTVMOC41NzAwMSA2MC4yNTk1QzguMDg5NDIgNTkuNzg5OSA3LjUxNzM4IDU5LjQyNDIgNi44ODk0NyA1OS4xODUxQzYuMjYxNTUgNTguOTQ2IDUuNTkxMTcgNTguODM4NSA0LjkxOTk4IDU4Ljg2OTVDMi43Mzk5OCA1OC44Njk1IDEuNDI5OTkgNjAuMDY5NSAxLjQyOTk5IDYxLjk2OTVDMS4zOTgxNSA2Mi4zNDAzIDEuNDUxOTIgNjIuNzEzNSAxLjU4NzE2IDYzLjA2MDNDMS43MjI0IDYzLjQwNyAxLjkzNTUyIDYzLjcxODEgMi4yMTAwMiA2My45Njk1QzIuODY0NzcgNjQuNDY2MSAzLjYzNjA1IDY0Ljc4NjMgNC40NTAwMSA2NC44OTk1TDYuMDgwMDIgNjUuMTQ5NUM3LjA1NDQ4IDY1LjIwMTQgNy45ODk3IDY1LjU1MDQgOC43NjAwMSA2Ni4xNDk1QzkuMTgyMjMgNjYuNTA1NiA5LjUxOTEyIDY2Ljk1MTkgOS43NDU4NSA2Ny40NTU1QzkuOTcyNTggNjcuOTU5MiAxMC4wODM0IDY4LjUwNzMgMTAuMDcgNjkuMDU5NUMxMC4wNyA3MS41ODk1IDguMDcgNzMuMjE5NSA1IDczLjIxOTUiIGZpbGw9ImJsYWNrIj48L3BhdGg+PHBhdGggZD0iTTE0LjQzOTUgNzMuMDU5M1Y1OC4wMjkzSDIzLjU0OTRWNTkuMDQ5M0gxNS41Nzk1VjY0Ljk3OTNIMjIuMzY5NFY2NS45ODkzSDE1LjU3OTVWNzIuMDQ5M0gyMy41NDk0VjczLjA1OTNIMTQuNDM5NVoiIGZpbGw9ImJsYWNrIj48L3BhdGg+PHBhdGggZD0iTTM3LjMxOTIgNzMuMDYwNUwzNi4wMDkyIDY5LjQxMDVIMjkuMDA5MkwyNy43MDkyIDczLjA2MDVIMjYuNDQ5MkwzMS45NzkyIDU4LjA2MDVIMzIuOTc5MkwzOC41MDkyIDczLjA2MDVIMzcuMzE5MlpNMzIuNTA5MiA1OS41NTA0TDI5LjM1OTIgNjguNDAwNUgzNS42NDkyTDMyLjUwOTIgNTkuNTUwNFoiIGZpbGw9ImJsYWNrIj48L3BhdGg+PC9nPjxkZWZzPjxjbGlwUGF0aCBpZD0iY2xpcDBfMTE0XzQ2OSI+PHJlY3Qgd2lkdGg9IjM5IiBoZWlnaHQ9Ijc0IiBmaWxsPSJ3aGl0ZSI+PC9yZWN0PjwvY2xpcFBhdGg+PC9kZWZzPjwvc3ZnPg==" alt="N-Sea logo"></div>
+      <div><div class="project-label">Cable Engineering Tools</div><div class="project-sub-label"><a class="dashboard-link" href="/">Back to dashboard</a></div></div>
+    </div>
+    <div class="brand-title"><div><h1>Carousel Stowage Calculation</h1><p>Stow cable by partition and check carousel capacity, height and crush load.</p></div></div>
+  </div>
+</header>
+
+<main class="calc-main">
+  <form class="calc-form carousel-workbench" method="post" action="/carousel">
+    <section class="panel outputs">
+      <div class="output-header">
+        <h2><%= [input.project_number, input.project].filter(Boolean).join(' - ') || 'Carousel Stowage Calculation' %></h2>
+        <div class="output-actions">
+          <button class="primary" type="submit"><%- icon('run') %>Run Calculation</button>
+          <button class="action" id="saveProject" type="button"><%- icon('export', 'button-icon save-button-icon') %>Save Project</button>
+          <button class="secondary" id="loadProject" type="button"><%- icon('load') %>Load Project</button>
+          <button class="secondary reference-action" id="createPdf" type="button"><%- icon('pdf') %>Create PDF</button>
+          <a class="button-link secondary reference-action manual-action" href="https://nseagroupbv.sharepoint.com/sites/SubseaCablesDept/_layouts/15/guestaccess.aspx?share=IQD7GDkhL4EhTrQ2FzQkgXuCAfG0hZ0wV8VgSynstpERQiA&amp;e=ByqjB3" target="_blank" rel="noopener"><%- icon('manual') %>Manual</a>
+          <input id="loadProjectFile" type="file" accept=".csv,text/csv,.json,application/json" hidden>
+        </div>
+      </div>
+      <div class="workbench-layout">
+      <div class="workbench-main">
+      <input class="tab-toggle" type="radio" name="active_tab" value="project" id="tab-project" <%= activeTab === 'project' ? 'checked' : '' %>>
+      <input class="tab-toggle" type="radio" name="active_tab" value="vessel" id="tab-vessel" <%= activeTab === 'vessel' ? 'checked' : '' %>>
+      <input class="tab-toggle" type="radio" name="active_tab" value="cable" id="tab-cable" <%= activeTab === 'cable' ? 'checked' : '' %>>
+      <input class="tab-toggle" type="radio" name="active_tab" value="results" id="tab-results" <%= activeTab === 'results' ? 'checked' : '' %>>
+      <input class="tab-toggle" type="radio" name="active_tab" value="graphs" id="tab-graphs" <%= activeTab === 'graphs' ? 'checked' : '' %>>
+      <input class="tab-toggle" type="radio" name="active_tab" value="details" id="tab-details" <%= activeTab === 'details' ? 'checked' : '' %>>
+      <div class="tab-labels" role="tablist" aria-label="Carousel stowage folders">
+        <label for="tab-project"><%- icon('project-tab', 'tab-icon') %>Project Input</label>
+        <label for="tab-vessel"><%- icon('vessel-tab', 'tab-icon') %>Vessel Information</label>
+        <label for="tab-cable"><%- icon('cable-tab', 'tab-icon') %>Cable Input</label>
+        <label for="tab-results"><%- icon('stowage-tab', 'tab-icon') %>Stowage Result</label>
+        <label for="tab-graphs"><%- icon('layer-tab', 'tab-icon') %>Layer Result</label>
+        <label for="tab-details"><%- icon('wrap-tab', 'tab-icon') %>Wrap Result</label>
+      </div>
+      <div class="tab-panels">
+
+      <% if (reportError) { %><div class="error" style="display:block"><%= reportError %></div><% } %>
+      <% if (submitted && result.errors.length) { %><div class="error" style="display:block"><%= result.errors.join(' ') %></div><% } %>
+
+      <div class="tab-panel" id="panel-project">
+        <div class="input-group-title">Project input</div>
+        <div class="two-col">
+          <div class="field"><label for="project">Project</label><input id="project" name="project" type="text" value="<%= esc(input.project) %>"></div>
+          <div class="field"><label for="project_number">Project number</label><input id="project_number" name="project_number" type="text" value="<%= esc(input.project_number) %>"></div>
+          <div class="field"><label for="revision">Revision</label><input id="revision" name="revision" type="text" value="<%= esc(input.revision) %>"></div>
+          <div class="field"><label for="date">Date</label><input id="date" name="date" type="date" value="<%= esc(input.date) %>"></div>
+        </div>
+        <div class="recent-query-box">
+          <div class="recent-query-head"><h3>Last Saved Calculation</h3><button class="secondary" id="clearRecentQueries" type="button"><%- icon('clear') %>Clear</button></div>
+          <div id="recentQueriesList"><div class="recent-query-empty">No saved calculations yet.</div></div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="panel-vessel">
+        <div id="customVesselStore" hidden>
+          <% (input.custom_vessels || []).forEach(function(row, index) { %>
+            <input name="custom_vessels[<%= index %>][vessel_name]" type="hidden" value="<%= esc(row.vessel_name) %>">
+            <input name="custom_vessels[<%= index %>][carousel_mode]" type="hidden" value="<%= esc(row.carousel_mode) %>">
+            <input name="custom_vessels[<%= index %>][partition]" type="hidden" value="<%= esc(row.partition) %>">
+            <input name="custom_vessels[<%= index %>][partition_id]" type="hidden" value="<%= esc(row.partition_id) %>">
+            <input name="custom_vessels[<%= index %>][partition_od]" type="hidden" value="<%= esc(row.partition_od) %>">
+            <input name="custom_vessels[<%= index %>][partition_height]" type="hidden" value="<%= esc(row.partition_height) %>">
+            <input name="custom_vessels[<%= index %>][partition_max_height]" type="hidden" value="<%= esc(row.partition_max_height || row.partition_height) %>">
+            <input name="custom_vessels[<%= index %>][daf]" type="hidden" value="<%= esc(row.daf) %>">
+            <input name="custom_vessels[<%= index %>][individual_capacity]" type="hidden" value="<%= esc(row.individual_capacity ?? '') %>">
+            <input name="custom_vessels[<%= index %>][carousel_total_capacity]" type="hidden" value="<%= esc(row.carousel_total_capacity) %>">
+          <% }); %>
+        </div>
+        <div class="vessel-standard" id="vesselStandardForm">
+          <div class="input-group-title">Vessel information</div>
+          <div class="two-col">
+            <div class="field"><label for="vessel">Vessel</label><select id="vessel" name="vessel"><% vessels.forEach(function(vessel) { %><option value="<%= vessel %>" <%= vessel === input.vessel ? 'selected' : '' %>><%= vessel %></option><% }); %></select></div>
+            <div class="field"><label for="carousel_mode">Carousel mode</label><select id="carousel_mode" name="carousel_mode"><% modes.forEach(function(mode) { %><option value="<%= mode %>" <%= mode === input.carousel_mode ? 'selected' : '' %>><%= titleCase(mode) %></option><% }); %></select></div>
+            <div class="field"><label for="partition_extension">Partition extension</label><select id="partition_extension" name="partition_extension"><option value="no" <%= input.partition_extension === 'no' ? 'selected' : '' %>>No</option><option value="yes" <%= input.partition_extension === 'yes' ? 'selected' : '' %>>Yes</option></select></div>
+            <div class="field"><label for="stowing_factor">Stowing factor</label><div class="input-wrap"><input id="stowing_factor" name="stowing_factor" type="text" inputmode="decimal" value="<%= esc(String(input.stowing_factor).replace('.', ',')) %>"><span class="unit">x</span></div></div>
+          </div>
+          <div class="form-actions-row"><button class="secondary" type="button" id="addVesselData"><%- icon('add', 'button-icon add-button-icon') %>Add vessel data</button></div>
+        </div>
+        <div class="vessel-editor" id="customVesselEditor">
+          <div class="input-group-title">Vessel information</div>
+          <div class="two-col">
+            <div class="field"><label for="customVesselName">Vessel</label><input id="customVesselName" type="text"></div>
+            <div class="field"><label for="customCarouselMode">Carousel mode</label><select id="customCarouselMode"><% modes.forEach(function(mode) { %><option value="<%= mode %>"><%= titleCase(mode) %></option><% }); %></select></div>
+            <div class="field"><label for="customPartitionExtension">Partition extension</label><select id="customPartitionExtension"><option value="no">No</option><option value="yes">Yes</option></select></div>
+            <div class="field"><label for="customStowingFactor">Stowing factor</label><div class="input-wrap"><input id="customStowingFactor" type="text" inputmode="decimal" value="<%= esc(String(input.stowing_factor).replace('.', ',')) %>"><span class="unit">x</span></div></div>
+          </div>
+          <div class="vessel-editor-actions">
+            <button class="action" id="saveCustomVessel" type="button"><%- icon('export', 'button-icon save-button-icon') %>Save vessel</button>
+            <button class="danger" id="cancelCustomVessel" type="button"><%- icon('remove') %>Cancel</button>
+          </div>
+          <div class="table-wrap">
+            <table id="customVesselTable"><caption>Vessel Partition Data</caption><thead><tr id="customVesselHeader"></tr></thead><tbody id="customVesselRows"></tbody></table>
+          </div>
+        </div>
+        <div class="table-wrap vessel-standard" id="vesselDataView">
+          <table id="vesselDataTable"><caption>Vessel Partition Data</caption><thead><tr><th>Vessel</th><th>Mode</th><th>Partition</th><th>ID [m]</th><th>OD [m]</th><th>Height [m]</th><th>DAF</th><th>Individual Capacity [t]</th><th>Shared Capacity [t]</th></tr></thead><tbody id="vesselDataRows">
+            <% result.vesselRows.forEach(function(row) { %><tr><td><%= row.Vessel %></td><td><%= titleCase(row['Carousel Mode']) %></td><td><%= titleCase(row.Partition) %></td><td><%= fmt(row['Carousel ID [m]'], 2) %></td><td><%= fmt(row['Carousel OD [m]'], 2) %></td><td><%= fmt(row['Carousel Height [m]'], 2) %></td><td><%= fmt(row.DAF, 3) %></td><td><%= row['Individual Capacity'] == null ? '-' : fmt(row['Individual Capacity'], 0) %></td><td><%= fmt(row['Total Weight Capacity'] || row['Carousel_capacity [t]'], 0) %></td></tr><% }); %>
+          </tbody></table>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="panel-cable">
+        <div class="input-group-title">Cable Types</div>
+        <div class="table-wrap"><table class="cable-input-table" id="cableTypeTable"><caption>Cable Type Library</caption><thead><tr><th>Type name</th><th>OD [mm]</th><th>Unit weight [kg/m]</th><th>Allowable crush [kN/m]</th><th>Color</th><th>Action</th></tr></thead><tbody>
+          <% input.cable_types.forEach(function(type, index) { %>
+            <tr><td><input name="cable_types[<%= index %>][name]" type="text" value="<%= esc(type.name) %>"></td><td><input name="cable_types[<%= index %>][od]" type="number" step="0.1" value="<%= esc(type.od) %>"></td><td><input name="cable_types[<%= index %>][unit_weight]" type="number" step="0.1" value="<%= esc(type.unit_weight) %>"></td><td><input name="cable_types[<%= index %>][allowable]" type="number" step="0.1" value="<%= esc(type.allowable) %>"></td><td><input name="cable_types[<%= index %>][color]" type="color" value="<%= esc(type.color || '#008C72') %>"></td><td><button class="remove-cable-type-row icon-button" type="button" aria-label="Remove cable type"><%- icon('remove') %></button></td></tr>
+          <% }); %>
+        </tbody></table></div>
+        <div class="form-actions-row"><button class="secondary" type="button" id="addCableTypeRow"><%- icon('add', 'button-icon add-button-icon') %>Add cable type</button></div>
+
+        <div class="input-group-title">Cable List</div>
+        <div class="table-wrap"><table class="cable-input-table" id="cableRows"><caption>Cable Input</caption><thead><tr><th>Cable name</th><th>Length [m]</th><th>Cable type</th><th>Partition</th><th>Action</th></tr></thead><tbody>
+          <% input.cables.forEach(function(cable, index) { %>
+            <tr><td><input name="cables[<%= index %>][name]" type="text" value="<%= esc(cable.name) %>"></td><td><input name="cables[<%= index %>][length]" type="number" step="0.1" value="<%= esc(cable.length) %>"></td><td><select name="cables[<%= index %>][type]"><% input.cable_types.forEach(function(type) { %><option value="<%= esc(type.name) %>" <%= type.name === cable.type ? 'selected' : '' %>><%= type.name %></option><% }); %></select></td><td><select name="cables[<%= index %>][partition]"><% partitions.forEach(function(partition) { %><option value="<%= partition %>" <%= partition === String(cable.partition).toLowerCase() ? 'selected' : '' %>><%= titleCase(partition) %></option><% }); %></select></td><td><button class="remove-cable-row icon-button" type="button" aria-label="Remove cable row"><%- icon('remove') %></button></td></tr>
+          <% }); %>
+        </tbody></table></div>
+        <div class="form-actions-row"><button class="secondary" type="button" id="addCableRow"><%- icon('add', 'button-icon add-button-icon') %>Add cable</button></div>
+      </div>
+
+      <div class="tab-panel" id="panel-results">
+        <section class="result-summary-section">
+          <h3>Cable Type</h3>
+          <div class="result-summary-table-wrap"><table class="result-summary-table"><thead><tr><th>Cable type</th><th>Outer Diameter [mm]</th><th>Unit weight [kg/m]</th><th>Allowable dynamic crush load [kN/m]</th><% partitions.forEach(function(partition) { %><th>Cable Length <%= titleCase(partition) %> [m]</th><% }); %><th>Total Length [m]</th><th>Total Weight [t]</th></tr></thead><tbody>
+            <% reportCableTypes.forEach(function(type) { %><tr><td><%= type.name %></td><td><%= fmt(type.od, 1) %></td><td><%= fmt(type.unit_weight, 2) %></td><td><%= fmt(type.allowable, 1) %></td><% partitions.forEach(function(partition) { %><td><%= fmt(type.partitions[partition] || 0, 1) %></td><% }); %><td><%= fmt(type.total_length, 1) %></td><td><%= fmt(type.total_weight, 1) %></td></tr><% }); %>
+            <tr class="result-total-row"><td colspan="4">Total</td><% partitions.forEach(function(partition) { %><td><%= fmt(reportPartitionTotals[partition] || 0, 1) %></td><% }); %><td><%= fmt(reportTotalProjectLength, 1) %></td><td><%= fmt(reportTotalProjectWeight, 1) %></td></tr>
+          </tbody></table></div>
+        </section>
+
+        <section class="result-summary-section">
+          <h3>Stowing Result</h3>
+          <% if (warningMessages.length) { %><div class="result-summary-warning">NOT OK: <%= warningMessages.join('; ') %>.</div><% } %>
+          <div class="result-summary-table-wrap"><table class="result-summary-table stowing-results-table">
+            <colgroup><col class="result-name-column"><col span="<%= (partitions.length + 1) * 3 %>"></colgroup>
+            <thead>
+              <tr><th rowspan="2">Result</th><% partitions.forEach(function(partition) { %><th class="result-group-start" colspan="3"><%= titleCase(partition) %> Partition</th><% }); %><th class="result-group-start" colspan="3">Total</th></tr>
+              <tr><% partitions.forEach(function() { %><th class="result-group-start">Actual</th><th>Allowable</th><th>%</th><% }); %><th class="result-group-start">Actual</th><th>Allowable</th><th>%</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Total weight [t]</td><% partitions.forEach(function(partition) { const row = summaryByPartition[partition] || {}; const individualCapacity = Number(row.Partition_capacity); %><td class="result-group-start"><%= fmt(row.Total_weight, 1) %></td><td><%= fmt(individualCapacity, 1) %></td><td><%= fmt(individualCapacity > 0 ? Number(row.Total_weight || 0) / individualCapacity * 100 : null, 0, '%') %></td><% }); %><td class="result-group-start"><strong><%= fmt(totalWeightStowed, 1) %></strong></td><td><%= fmt(reportSharedCapacity, 1) %></td><td><%= fmt(reportSharedCapacity > 0 ? totalWeightStowed / reportSharedCapacity * 100 : null, 0, '%') %></td></tr>
+              <tr><td>Stowed cable / Available cable length [m]</td><% partitions.forEach(function(partition) { const row = summaryByPartition[partition] || {}; %><td class="result-group-start <%= row.Stop_reason ? 'result-alert-cell' : '' %>" colspan="2"><%= fmt(row.Total_length_stowed, 1) %> / <%= fmt(row['Initial_cable_length [m]'], 1) %></td><td><%= fmt(row['Length_stowed [%]'], 0, '%') %></td><% }); %><td class="result-group-start" colspan="2"><strong><%= fmt(totalLengthStowed, 1) %> / <%= fmt(totalInitialLength, 1) %></strong></td><td><%= fmt(totalInitialLength > 0 ? totalLengthStowed / totalInitialLength * 100 : null, 0, '%') %></td></tr>
+              <tr><td>Number of layers [-]</td><% partitions.forEach(function(partition) { const row = summaryByPartition[partition] || {}; %><td class="result-group-start" colspan="3"><%= fmt(row.Max_layer, 0) %></td><% }); %><td class="result-group-start" colspan="3"><strong><%= fmt(reportMaxLayers, 0) %></strong></td></tr>
+              <tr><td>Stack height [m]</td><% partitions.forEach(function(partition) { const row = summaryByPartition[partition] || {}; %><td class="result-group-start <%= heightWarningPartitions[partition] ? 'result-alert-cell' : '' %>"><%= fmt(row.Max_elevation_top, 2) %></td><td><%= fmt(row.Carousel_height, 2) %></td><td class="<%= heightWarningPartitions[partition] ? 'result-alert-cell' : '' %>"><%= fmt(row['Elevation_used [%]'], 0, '%') %></td><% }); %><td class="result-group-start"><%= fmt(totalMaxElevationTop, 2) %></td><td><%= fmt(totalCarouselHeightUsed, 2) %></td><td><strong><%= fmt(totalCarouselHeightUsed > 0 ? totalMaxElevationTop / totalCarouselHeightUsed * 100 : null, 0, '%') %></strong></td></tr>
+              <tr><td>CoG-z above carousel bottom [m]</td><% partitions.forEach(function(partition) { const row = summaryByPartition[partition] || {}; %><td class="result-group-start" colspan="3"><%= fmt(row.CoG_z, 2) %></td><% }); %><td class="result-group-start" colspan="3"><strong><%= fmt(totalCogZ, 2) %></strong></td></tr>
+            </tbody>
+          </table></div>
+        </section>
+
+        <section class="result-summary-section">
+          <h3>Crush Load</h3>
+          <% crushWarnings.forEach(function(warning) { %><div role="alert" class="result-summary-warning <%= warning.exceeded ? '' : 'crush-warning-caution' %>"><%= warning.message %></div><% }); %>
+          <div class="result-summary-table-wrap"><table class="result-summary-table"><thead><tr><th>Crush load check</th><% partitions.forEach(function(partition) { %><th><%= titleCase(partition) %></th><% }); %></tr></thead><tbody>
+            <tr><td>Location of highest crush load [-]</td><% partitions.forEach(function(partition) { const row = crushByPartition[partition] || {}; %><td><%= row['Layer Actual'] == null ? '-' : 'Layer ' + fmt(row['Layer Actual'], 0) %></td><% }); %></tr>
+            <tr><td>Cable type [-]</td><% partitions.forEach(function(partition) { const row = crushByPartition[partition] || {}; %><td><%= cableTypeByName[row['Cable Name']] || row['Cable Name'] || '-' %></td><% }); %></tr>
+            <tr><td>Static load [kN/m]</td><% partitions.forEach(function(partition) { const row = crushByPartition[partition] || {}; %><td><%= fmt(row['Static_crush_load [kN/m]'], 2) %></td><% }); %></tr>
+            <tr><td>Dynamic load [kN/m]</td><% partitions.forEach(function(partition) { const row = crushByPartition[partition] || {}; %><td><%= fmt(row['Dynamic_crush_load [kN/m]'], 2) %></td><% }); %></tr>
+            <tr><td>Allowable [kN/m]</td><% partitions.forEach(function(partition) { const row = crushByPartition[partition] || {}; %><td><%= fmt(row['Allowable_crush_load [kN/m]'], 1) %></td><% }); %></tr>
+            <tr><td>Utilization [%]</td><% partitions.forEach(function(partition) { const row = crushByPartition[partition] || {}; %><td class="<%= crushUtilizationClass(row['Crush_utilization [%]']) %>"><%= fmt(row['Crush_utilization [%]'], 1, '%') %></td><% }); %></tr>
+          </tbody></table></div>
+        </section>
+      </div>
+
+      <div class="tab-panel" id="panel-graphs">
+        <div class="graph-card">
+          <h3>Layer Stowage Map</h3>
+          <% if (!layerMapMaxLayer) { %>
+            <div class="length-empty">No layer data available.</div>
+          <% } else { %>
+            <div class="layer-map" style="--partition-count:<%= Math.max(1, layerMapPartitions.length) %>; --layer-count:<%= layerMapMaxLayer %>;">
+              <div class="layer-map-side">
+                <div class="layer-map-axis-title">Layer</div>
+                <div class="layer-map-axis">
+                  <% for (let layer = layerMapMaxLayer; layer >= 1; layer--) { %>
+                    <div class="layer-axis-label">Layer <%= layer %></div>
+                  <% } %>
+                </div>
+              </div>
+              <div class="layer-map-main">
+                <div class="layer-map-header">
+                  <% layerMapPartitions.forEach(function(partition) { %>
+                    <div class="layer-map-heading"><%= titleCase(partition) %> Partition</div>
+                  <% }); %>
+                </div>
+                <% for (let layer = layerMapMaxLayer; layer >= 1; layer--) { %>
+                  <div class="layer-map-row">
+                    <% layerMapPartitions.forEach(function(partition) { 
+                      const layerData = graphData.partitions[partition]?.layers[String(layer)] || { cables: {} };
+                      const layerCables = layerData.cables || {};
+                      const layerTotal = Object.values(layerCables).reduce((sum, value) => sum + Number(value || 0), 0);
+                      const fillPct = Math.max(0, Math.min(100, layerTotal / layerMapReferenceLengths[partition] * 100));
+                    %>
+                      <div class="layer-map-cell">
+                        <div class="layer-map-track" style="--fill:<%= fillPct.toFixed(2) %>%;">
+                          <% Object.entries(layerCables).forEach(function(entry) {
+                            const cableName = entry[0];
+                            const length = Number(entry[1] || 0);
+                            if (length <= 0) return;
+                            const entryWidth = layerTotal > 0 ? Math.max(0, Math.min(100, length / layerTotal * 100)) : 0;
+                            const entryCellWidth = fillPct * entryWidth / 100;
+                            const entryLabel = `${cableName} - ${fmt(length, 1)} m`;
+                          %>
+                            <div class="layer-map-entry" data-cable-name="<%= cableName %>" style="width:<%= entryWidth.toFixed(2) %>%; background:<%= cableColorMap[cableName] || '#29378A' %>;" title="<%= entryLabel %>">
+                              <% if (entryCellWidth >= 18) { %><span class="layer-map-entry-label"><%= entryLabel %></span><% } %>
+                            </div>
+                          <% }); %>
+                        </div>
+                      </div>
+                    <% }); %>
+                  </div>
+                <% } %>
+              </div>
+            </div>
+          <% } %>
+        </div>
+        <div class="table-wrap"><table id="layerResultTable"><caption>Detailed Stowing</caption><thead><tr><th>Partition</th><th>Cable</th><th>Carousel capacity [t]</th><th>Partition capacity [t]</th><th>Initial cable length [m]</th><th>Carousel height [m]</th><th>Carousel ID [m]</th><th>Carousel OD [m]</th><th>Layer</th><th>Cable OD [m]</th><th>Direction</th><th>Inner start [m]</th><th>Outer start [m]</th><th>Inner end [m]</th><th>Outer end [m]</th><th>Placed [m]</th><th>Remaining [m]</th><th>Weight [t]</th><th>Cumulative weight [t]</th><th>Max possible wraps</th><th>Actual wraps</th><th>Actual wraps ceil</th><th>Elevation bottom [m]</th><th>Elevation top [m]</th><th>Elevation used [%]</th><th>Layer effective OD [m]</th><th>Layer CoG z [m]</th><th>Allowable crush load [kN/m]</th><th>DAF</th><th>Static crush load [kN/m]</th><th>Dynamic crush load [kN/m]</th><th>Crush utilization [%]</th><th>Status</th><th>Stop reason</th></tr></thead><tbody>
+          <% result.detailed.forEach(function(row) { %><tr><td><%= titleCase(row.Partition) %></td><td><%= row['Cable Name'] %></td><td><%= fmt(row['Carousel_capacity [t]'], 1) %></td><td><%= fmt(row['Partition_capacity [t]'], 1) %></td><td><%= fmt(row['Initial_cable_length [m]'], 1) %></td><td><%= fmt(row['Carousel_height [m]'], 2) %></td><td><%= fmt(row['Carousel ID [m]'], 2) %></td><td><%= fmt(row['Carousel OD [m]'], 2) %></td><td><%= fmt(row['Layer Actual'], 0) %></td><td><%= fmt(row.Cable_OD_m, 3) %></td><td><%= row.Direction || '-' %></td><td><%= fmt(row.Inner_start, 2) %></td><td><%= fmt(row.Outer_start, 2) %></td><td><%= fmt(row.Inner_end, 2) %></td><td><%= fmt(row.Outer_end, 2) %></td><td><%= fmt(row['Placed [m]'], 1) %></td><td><%= fmt(row['Remaining [m]'], 1) %></td><td><%= fmt(row['Weight_placed [t]'], 1) %></td><td><%= fmt(row['Cumulative_weight [t]'], 1) %></td><td><%= fmt(row.Max_possible_wraps, 2) %></td><td><%= fmt(row.Actual_wraps_used, 2) %></td><td><%= fmt(row.Actual_wraps_used_ceil, 0) %></td><td><%= fmt(row['Elevation_bottom_of_layer [m]'], 2) %></td><td><%= fmt(row['Elevation_top_of_layer [m]'], 2) %></td><td><%= fmt(row['Elevation_used [%]'], 1) %></td><td><%= fmt(row.Layer_effective_od_m, 3) %></td><td><%= fmt(row['Layer_CoGz [m]'], 2) %></td><td><%= fmt(row['Allowable_crush_load [kN/m]'], 2) %></td><td><%= fmt(row.DAF, 3) %></td><td><%= fmt(row['Static_crush_load [kN/m]'], 2) %></td><td><%= fmt(row['Dynamic_crush_load [kN/m]'], 2) %></td><td><%= fmt(row['Crush_utilization [%]'], 1) %></td><td><%= row.Stowing_status || '-' %></td><td><%= row.Stop_reason || '-' %></td></tr><% }); %>
+        </tbody></table></div>
+      </div>
+
+      <div class="tab-panel" id="panel-details">
+        <div class="graph-card">
+          <h3>Carousel Plan View</h3>
+          <div class="graph-controls">
+            <div class="field"><label for="topViewPartition">Partition</label><select id="topViewPartition"><% layerMapPartitions.forEach(function(partition) { %><option value="<%= partition %>" <%= partition === defaultGraphPartition ? 'selected' : '' %>><%= titleCase(partition) %></option><% }); %></select></div>
+            <div class="field"><label for="topViewLayer">Layer</label><select id="topViewLayer"></select></div>
+          </div>
+          <div id="carouselTopView" class="carousel-plan" aria-live="polite"></div>
+        </div>
+        <div class="table-wrap"><table id="wrapResultTable"><caption>Wrap Lengths</caption><thead><tr><th>Partition</th><th>Cable</th><th>Lay direction</th><th>Layer</th><th>Wrap no.</th><th>Diameter [m]</th><th>Full length [m]</th><th>Actual length [m]</th><th>Fill [%]</th><th>Status</th></tr></thead><tbody>
+          <% result.wrapRows.forEach(function(row) { %><tr><td><%= titleCase(row.Partition) %></td><td><%= row['Cable Name'] %></td><td><%= row.Direction %></td><td><%= fmt(row['Layer Actual'], 0) %></td><td><%= fmt(row['Wrap No'], 0) %></td><td><%= fmt(row['Wrap Diameter [m]'], 2) %></td><td><%= fmt(row['Full Wrap Length [m]'], 1) %></td><td><%= fmt(row['Actual Wrap Length [m]'], 1) %></td><td><%= fmt(row['Wrap Fill [%]'], 1) %></td><td><%= row['Wrap Status'] %></td></tr><% }); %>
+        </tbody></table></div>
+      </div>
+      </div>
+      </div>
+      </div>
+    </section>
+  </form>
+</main>
+
+<footer><div class="footer-inner"><span class="footer-brand">N-Sea Cable Engineering Tools</span> - Built by Rida. Still evolving, already surprisingly useful. Found a bug or have an idea to make it even better? <a class="footer-contact" href="<%= mailtoLink %>">Drop me a line and let me know.</a></div></footer>
+
+<section class="pdf-report" aria-label="Printable carousel stowage report">
+  <div class="pdf-report-sheet">
+    <div class="pdf-report-banner">
+      <div class="pdf-report-logo-frame"><img class="pdf-report-logo" id="pdfReportLogo" alt="N-Sea logo"></div>
+      <div><h1>Carousel Stowage Calculation Report</h1><p><%= input.date || '-' %></p></div>
+    </div>
+
+    <div class="pdf-report-grid pdf-report-block">
+      <table class="pdf-compact"><tbody>
+        <tr><td class="pdf-label-cell">Project</td><td class="pdf-input-cell"><%= input.project || '-' %></td></tr>
+        <tr><td class="pdf-label-cell">Project number</td><td class="pdf-data-cell"><%= input.project_number || '-' %></td></tr>
+        <tr><td class="pdf-label-cell">Revision</td><td class="pdf-data-cell"><%= input.revision || '-' %></td></tr>
+      </tbody></table>
+      <table class="pdf-compact"><tbody>
+        <tr><td class="pdf-label-cell">Selected vessel</td><td class="pdf-input-cell"><%= input.vessel || '-' %></td></tr>
+        <tr><td class="pdf-label-cell">Carousel mode</td><td class="pdf-input-cell"><%= titleCase(input.carousel_mode || '') || '-' %></td></tr>
+        <tr><td class="pdf-label-cell">Partition Ring</td><td class="pdf-input-cell"><%= String(input.carousel_mode || '').toLowerCase() === 'single' ? 'No' : 'Yes' %></td></tr>
+      </tbody></table>
+    </div>
+
+    <div class="pdf-section-title">Carousel Data</div>
+    <table class="pdf-compact pdf-report-block">
+      <thead><tr><th>Partition</th><% partitions.forEach(function(partition) { %><th><%= titleCase(partition) %></th><% }); %><th>Unit</th></tr></thead>
+      <tbody>
+        <tr><td class="pdf-label-cell">Outer diameter</td><% partitions.forEach(function(partition) { const row = vesselByPartition[partition] || {}; %><td class="pdf-data-cell"><%= fmt(row['Carousel OD [m]'], 2) %></td><% }); %><td class="pdf-unit">m</td></tr>
+        <tr><td class="pdf-label-cell">Inner diameter</td><% partitions.forEach(function(partition) { const row = vesselByPartition[partition] || {}; %><td class="pdf-data-cell"><%= fmt(row['Carousel ID [m]'], 2) %></td><% }); %><td class="pdf-unit">m</td></tr>
+        <tr><td class="pdf-label-cell">Available height</td><% partitions.forEach(function(partition) { const row = vesselByPartition[partition] || {}; %><td class="pdf-data-cell"><%= fmt(row['Carousel Height [m]'], 2) %></td><% }); %><td class="pdf-unit">m</td></tr>
+        <tr><td class="pdf-label-cell">Capacity</td><% partitions.forEach(function(partition) { const row = vesselByPartition[partition] || {}; %><td class="pdf-data-cell"><%= fmt(row['Weight Capacity'], 1) %></td><% }); %><td class="pdf-unit">t</td></tr>
+      </tbody>
+    </table>
+
+    <div class="pdf-section-title">Cable Type</div>
+    <table class="pdf-compact pdf-report-block">
+      <thead><tr><th>Cable type</th><th>Outer Diameter [mm]</th><th>Unit weight [kg/m]</th><th>Allowable dynamic crush load [kN/m]</th><% partitions.forEach(function(partition) { %><th>Cable Length <%= titleCase(partition) %> [m]</th><% }); %><th>Total Length [m]</th><th>Total Weight [t]</th></tr></thead>
+      <tbody>
+        <% reportCableTypes.forEach(function(type) { %>
+          <tr><td class="pdf-data-cell"><%= type.name %></td><td class="pdf-data-cell"><%= fmt(type.od, 1) %></td><td class="pdf-data-cell"><%= fmt(type.unit_weight, 2) %></td><td class="pdf-data-cell"><%= fmt(type.allowable, 1) %></td><% partitions.forEach(function(partition) { %><td class="pdf-data-cell"><%= fmt(type.partitions[partition] || 0, 1) %></td><% }); %><td class="pdf-data-cell"><%= fmt(type.total_length, 1) %></td><td class="pdf-data-cell"><%= fmt(type.total_weight, 1) %></td></tr>
+        <% }); %>
+        <tr class="pdf-total-row"><td colspan="4">Total</td><% partitions.forEach(function(partition) { %><td><%= fmt(reportPartitionTotals[partition] || 0, 1) %></td><% }); %><td><%= fmt(reportTotalProjectLength, 1) %></td><td><%= fmt(reportTotalProjectWeight, 1) %></td></tr>
+      </tbody>
+    </table>
+
+    <div class="pdf-section-title">Stowing Result</div>
+    <% if (warningMessages.length) { %><div class="pdf-report-warning pdf-report-block">NOT OK: <%= warningMessages.join('; ') %>.</div><% } %>
+    <table class="pdf-compact pdf-report-block stowing-results-table">
+      <colgroup><col class="result-name-column"><col span="<%= (partitions.length + 1) * 3 %>"></colgroup>
+      <thead>
+        <tr><th rowspan="2">Result</th><% partitions.forEach(function(partition) { %><th class="pdf-group-start" colspan="3"><%= titleCase(partition) %> Partition</th><% }); %><th class="pdf-group-start" colspan="3">Total</th></tr>
+        <tr><% partitions.forEach(function() { %><th class="pdf-group-start">Actual</th><th>Allowable</th><th>%</th><% }); %><th class="pdf-group-start">Actual</th><th>Allowable</th><th>%</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="pdf-label-cell">Total weight [t]</td><% partitions.forEach(function(partition) { const row = summaryByPartition[partition] || {}; const individualCapacity = Number(row.Partition_capacity); %><td class="pdf-data-cell pdf-group-start"><%= fmt(row.Total_weight, 1) %></td><td class="pdf-data-cell"><%= fmt(individualCapacity, 1) %></td><td class="pdf-data-cell"><%= fmt(individualCapacity > 0 ? Number(row.Total_weight || 0) / individualCapacity * 100 : null, 0, '%') %></td><% }); %><td class="pdf-data-cell pdf-group-start"><strong><%= fmt(totalWeightStowed, 1) %></strong></td><td class="pdf-data-cell"><%= fmt(reportSharedCapacity, 1) %></td><td class="pdf-data-cell"><%= fmt(reportSharedCapacity > 0 ? totalWeightStowed / reportSharedCapacity * 100 : null, 0, '%') %></td></tr>
+        <tr><td class="pdf-label-cell">Stowed cable / Available cable length [m]</td><% partitions.forEach(function(partition) { const row = summaryByPartition[partition] || {}; %><td class="pdf-data-cell pdf-group-start <%= row.Stop_reason ? 'pdf-alert-cell' : '' %>" colspan="2"><%= fmt(row.Total_length_stowed, 1) %> / <%= fmt(row['Initial_cable_length [m]'], 1) %></td><td class="pdf-data-cell"><%= fmt(row['Length_stowed [%]'], 0, '%') %></td><% }); %><td class="pdf-data-cell pdf-group-start" colspan="2"><strong><%= fmt(totalLengthStowed, 1) %> / <%= fmt(totalInitialLength, 1) %></strong></td><td class="pdf-data-cell"><%= fmt(totalInitialLength > 0 ? totalLengthStowed / totalInitialLength * 100 : null, 0, '%') %></td></tr>
+        <tr><td class="pdf-label-cell">Number of layers [-]</td><% partitions.forEach(function(partition) { const row = summaryByPartition[partition] || {}; %><td class="pdf-data-cell pdf-group-start" colspan="3"><%= fmt(row.Max_layer, 0) %></td><% }); %><td class="pdf-data-cell pdf-group-start" colspan="3"><%= fmt(reportMaxLayers, 0) %></td></tr>
+        <tr><td class="pdf-label-cell">Stack height [m]</td><% partitions.forEach(function(partition) { const row = summaryByPartition[partition] || {}; %><td class="pdf-data-cell pdf-group-start <%= heightWarningPartitions[partition] ? 'pdf-alert-cell' : '' %>"><%= fmt(row.Max_elevation_top, 2) %></td><td class="pdf-data-cell"><%= fmt(row.Carousel_height, 2) %></td><td class="pdf-data-cell <%= heightWarningPartitions[partition] ? 'pdf-alert-cell' : '' %>"><%= fmt(row['Elevation_used [%]'], 0, '%') %></td><% }); %><td class="pdf-data-cell pdf-group-start"><%= fmt(totalMaxElevationTop, 2) %></td><td class="pdf-data-cell"><%= fmt(totalCarouselHeightUsed, 2) %></td><td class="pdf-data-cell"><%= fmt(totalCarouselHeightUsed > 0 ? totalMaxElevationTop / totalCarouselHeightUsed * 100 : null, 0, '%') %></td></tr>
+        <tr><td class="pdf-label-cell">CoG-z above carousel bottom [m]</td><% partitions.forEach(function(partition) { const row = summaryByPartition[partition] || {}; %><td class="pdf-data-cell pdf-group-start" colspan="3"><%= fmt(row.CoG_z, 2) %></td><% }); %><td class="pdf-data-cell pdf-group-start" colspan="3"><%= fmt(totalCogZ, 2) %></td></tr>
+      </tbody>
+    </table>
+
+    <div class="pdf-section-title">Crush Load</div>
+    <% crushWarnings.forEach(function(warning) { %><div class="pdf-report-warning pdf-report-block <%= warning.exceeded ? '' : 'crush-warning-caution' %>"><%= warning.message %></div><% }); %>
+    <table class="pdf-compact pdf-report-block">
+      <thead><tr><th>Crush load check</th><% partitions.forEach(function(partition) { %><th><%= titleCase(partition) %></th><% }); %></tr></thead>
+      <tbody>
+        <tr><td class="pdf-label-cell">Location of highest crush load [-]</td><% partitions.forEach(function(partition) { const row = crushByPartition[partition] || {}; %><td class="pdf-data-cell"><%= row['Layer Actual'] == null ? '-' : 'Layer ' + fmt(row['Layer Actual'], 0) %></td><% }); %></tr>
+        <tr><td class="pdf-label-cell">Cable type [-]</td><% partitions.forEach(function(partition) { const row = crushByPartition[partition] || {}; %><td class="pdf-data-cell"><%= cableTypeByName[row['Cable Name']] || row['Cable Name'] || '-' %></td><% }); %></tr>
+        <tr><td class="pdf-label-cell">Static load [kN/m]</td><% partitions.forEach(function(partition) { const row = crushByPartition[partition] || {}; %><td class="pdf-data-cell"><%= fmt(row['Static_crush_load [kN/m]'], 2) %></td><% }); %></tr>
+        <tr><td class="pdf-label-cell">Dynamic load [kN/m]</td><% partitions.forEach(function(partition) { const row = crushByPartition[partition] || {}; %><td class="pdf-data-cell"><%= fmt(row['Dynamic_crush_load [kN/m]'], 2) %></td><% }); %></tr>
+        <tr><td class="pdf-label-cell">Allowable [kN/m]</td><% partitions.forEach(function(partition) { const row = crushByPartition[partition] || {}; %><td class="pdf-data-cell"><%= fmt(row['Allowable_crush_load [kN/m]'], 1) %></td><% }); %></tr>
+        <tr><td class="pdf-label-cell">Utilization [%]</td><% partitions.forEach(function(partition) { const row = crushByPartition[partition] || {}; %><td class="pdf-data-cell <%= row['Crush_utilization [%]'] > 100 ? 'pdf-alert-cell' : crushUtilizationClass(row['Crush_utilization [%]']) %>"><%= fmt(row['Crush_utilization [%]'], 1, '%') %></td><% }); %></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<script>
+const form = document.querySelector('.calc-form');
+const projectState = <%- JSON.stringify(input) %>;
+const carouselGraphData = <%- JSON.stringify(graphData) %>;
+const carouselCableColors = <%- JSON.stringify(cableColorMap) %>;
+const carouselPartitions = <%- JSON.stringify(partitions) %>;
+const carouselSubmitted = <%- JSON.stringify(submitted) %>;
+const carouselResultSnapshot = <%- JSON.stringify({
+  summary: result.summary,
+  crushSummary: result.crushSummary,
+  detailed: result.detailed,
+  wrapRows: result.wrapRows,
+  errors: result.errors,
+  graphData
+}) %>;
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  }[char]));
+}
+
+function colorForCable(name) {
+  const cableName = String(name || '').trim();
+  const cableRow = Array.from(document.querySelectorAll('#cableRows tbody tr')).find(row =>
+    row.querySelector('input[name$="[name]"]')?.value.trim() === cableName
+  );
+  const typeName = cableRow?.querySelector('select[name$="[type]"]')?.value.trim().toLowerCase();
+  const typeRow = Array.from(document.querySelectorAll('#cableTypeTable tbody tr')).find(row =>
+    row.querySelector('input[name$="[name]"]')?.value.trim().toLowerCase() === typeName
+  );
+  return typeRow?.querySelector('input[type="color"]')?.value || carouselCableColors[cableName] || '#29378A';
+}
+
+function refreshCableColors() {
+  document.querySelectorAll('.layer-map-entry[data-cable-name]').forEach(entry => {
+    entry.style.backgroundColor = colorForCable(entry.dataset.cableName);
+  });
+  drawCarouselTopView();
+}
+
+function getPartitionData(partition) {
+  return carouselGraphData.partitions?.[partition] || null;
+}
+
+function setTopViewLayerOptions() {
+  const partitionSelect = document.getElementById('topViewPartition');
+  const layerSelect = document.getElementById('topViewLayer');
+  if (!partitionSelect || !layerSelect) return;
+  const data = getPartitionData(partitionSelect.value);
+  const layers = Object.keys(data?.layers || {}).map(Number).sort((a, b) => a - b);
+  const previous = layerSelect.value;
+  layerSelect.innerHTML = '';
+  layers.forEach(layer => {
+    const option = document.createElement('option');
+    option.value = String(layer);
+    option.textContent = `Layer ${layer}`;
+    layerSelect.appendChild(option);
+  });
+  layerSelect.value = layers.includes(Number(previous)) ? previous : String(layers[0] || '');
+}
+
+function drawCarouselTopView() {
+  const plan = document.getElementById('carouselTopView');
+  const partition = document.getElementById('topViewPartition')?.value;
+  const layer = document.getElementById('topViewLayer')?.value;
+  const data = getPartitionData(partition);
+  if (!plan || !data || !data.layers?.[layer]) return;
+
+  const layerData = data.layers[layer];
+  const wraps = layerData.wraps || [];
+  const viewSize = 620;
+  const cx = viewSize * 0.5;
+  const cy = viewSize * 0.53;
+  const odRadiusM = Number(data.od) / 2;
+  const idRadiusM = Number(data.id) / 2;
+  const scale = viewSize * 0.39 / Math.max(odRadiusM, 1);
+  const partitionTitle = partition.charAt(0).toUpperCase() + partition.slice(1);
+  const layerTotal = Object.values(layerData.cables || {}).reduce((sum, value) => sum + Number(value || 0), 0);
+  const cableNames = Object.keys(layerData.cables || {});
+  const outerPx = odRadiusM * scale;
+  const innerPx = idRadiusM * scale;
+  const ringWidth = Math.max(outerPx - innerPx, 1);
+  const wrapCircles = wraps.map((wrap, index) => {
+    const radius = Number(wrap['Wrap Diameter [m]'] || 0) / 2 * scale;
+    const cableName = wrap['Cable Name'];
+    const color = colorForCable(cableName);
+    const width = Math.max(3.2, Number(wrap.Cable_OD_m || 0.14) * scale * 1.04);
+    const fillPct = Math.max(0, Math.min(100, Number(wrap['Wrap Fill [%]'] ?? 100)));
+    const dash = fillPct >= 99.95 ? '' : `pathLength="100" stroke-dasharray="${fillPct.toFixed(3)} ${(100 - fillPct).toFixed(3)}" transform="rotate(-90 ${cx} ${cy})" stroke-linecap="round"`;
+    const title = `${cableName} - Wrap ${wrap['Wrap No'] ?? '-'} - ${Number(wrap['Actual Wrap Length [m]'] || 0).toFixed(1)} m`;
+    return `
+      <circle cx="${cx}" cy="${cy}" r="${radius.toFixed(3)}" fill="none" stroke="#FFFFFF" stroke-width="${(width + 2.6).toFixed(2)}" opacity="1" ${dash}></circle>
+      <circle cx="${cx}" cy="${cy}" r="${radius.toFixed(3)}" fill="none" stroke="${color}" stroke-width="${width.toFixed(2)}" opacity=".96" ${dash}>
+        <title>${escapeHtml(title)}</title>
+      </circle>
+    `;
+  }).join('');
+  const idLabelY = cy - outerPx * 0.58;
+  const odLabelY = cy + outerPx * 0.58;
+  const idLabelX = Math.min(viewSize - 150, cx + innerPx + 24);
+  const odLabelX = Math.min(viewSize - 150, cx + outerPx - 72);
+
+  plan.innerHTML = `
+    <div class="carousel-plan-header">
+      <div class="carousel-plan-title">${escapeHtml(partitionTitle)} Partition Plan</div>
+      <div class="carousel-plan-subtitle">Layer ${escapeHtml(layer)} | ${layerTotal.toFixed(1)} m</div>
+    </div>
+    <div class="carousel-svg-wrap">
+      <svg viewBox="0 0 ${viewSize} ${viewSize}" role="img" aria-label="${escapeHtml(partitionTitle)} partition layer ${escapeHtml(layer)} carousel plan view">
+        <defs><filter id="softRingShadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="8" stdDeviation="7" flood-color="#29378A" flood-opacity=".14"></feDropShadow></filter></defs>
+        <rect x="0" y="0" width="${viewSize}" height="${viewSize}" fill="#F3F5FB"></rect>
+        <circle cx="${cx}" cy="${cy + outerPx * 0.07}" r="${(outerPx * 1.03).toFixed(2)}" fill="#29378A" opacity=".045"></circle>
+        <circle cx="${cx}" cy="${cy}" r="${((innerPx + outerPx) / 2).toFixed(2)}" fill="none" stroke="#E9ECF7" stroke-width="${ringWidth.toFixed(2)}" filter="url(#softRingShadow)"></circle>
+        <circle cx="${cx}" cy="${cy}" r="${outerPx.toFixed(2)}" fill="none" stroke="#29378A" stroke-width="4.2"></circle>
+        <circle cx="${cx}" cy="${cy}" r="${innerPx.toFixed(2)}" fill="#FFFFFF" stroke="#222222" stroke-width="3.2" stroke-dasharray="9 6"></circle>
+        ${wrapCircles}
+        <circle cx="${cx}" cy="${cy}" r="${Math.max(innerPx - 10, 10).toFixed(2)}" fill="#FFFFFF"></circle>
+        <text x="${cx}" y="${cy - 10}" text-anchor="middle" fill="#29378A" font-family="Source Sans Pro, Arial, sans-serif" font-size="23" font-weight="900">${escapeHtml(partitionTitle)}</text>
+        <text x="${cx}" y="${cy + 18}" text-anchor="middle" fill="#6E7078" font-family="Source Sans Pro, Arial, sans-serif" font-size="16" font-weight="700">Layer ${escapeHtml(layer)}</text>
+        <line x1="${(cx + innerPx * 0.72).toFixed(2)}" y1="${(cy - innerPx * 0.72).toFixed(2)}" x2="${(idLabelX - 10).toFixed(2)}" y2="${idLabelY.toFixed(2)}" stroke="#9AA6B2" stroke-width="1.4"></line>
+        <line x1="${(cx + outerPx * 0.72).toFixed(2)}" y1="${(cy + outerPx * 0.72).toFixed(2)}" x2="${(odLabelX - 10).toFixed(2)}" y2="${odLabelY.toFixed(2)}" stroke="#9AA6B2" stroke-width="1.4"></line>
+        <rect x="${idLabelX}" y="${idLabelY - 16}" width="118" height="28" fill="#FFFFFF" stroke="#D9DCE6"></rect>
+        <rect x="${odLabelX}" y="${odLabelY - 16}" width="118" height="28" fill="#FFFFFF" stroke="#D9DCE6"></rect>
+        <text x="${idLabelX + 10}" y="${idLabelY + 4}" fill="#222222" font-family="Source Sans Pro, Arial, sans-serif" font-size="14" font-weight="700">ID ${Number(data.id).toFixed(2)} m</text>
+        <text x="${odLabelX + 10}" y="${odLabelY + 4}" fill="#222222" font-family="Source Sans Pro, Arial, sans-serif" font-size="14" font-weight="700">OD ${Number(data.od).toFixed(2)} m</text>
+      </svg>
+    </div>
+  `;
+}
+
+function filterWrapResultTable() {
+  const partition = document.getElementById('topViewPartition')?.value;
+  document.querySelectorAll('#wrapResultTable tbody tr').forEach(row => {
+    const rowPartition = row.cells[0]?.textContent?.trim().toLowerCase();
+    row.hidden = Boolean(partition) && rowPartition !== String(partition).toLowerCase();
+  });
+}
+
+document.getElementById('topViewPartition')?.addEventListener('change', () => {
+  setTopViewLayerOptions();
+  drawCarouselTopView();
+  filterWrapResultTable();
+});
+document.getElementById('topViewLayer')?.addEventListener('change', drawCarouselTopView);
+setTopViewLayerOptions();
+drawCarouselTopView();
+filterWrapResultTable();
+
+function nextRowIndex(tbody, prefix) {
+  let maxIndex = -1;
+  tbody.querySelectorAll(`[name^="${prefix}["]`).forEach(field => {
+    const match = field.name.match(/\[(\d+)\]/);
+    if (match) maxIndex = Math.max(maxIndex, Number(match[1]));
+  });
+  return maxIndex + 1;
+}
+
+function currentCableTypeNames() {
+  return [...document.querySelectorAll('#cableTypeTable tbody input[name$="[name]"]')]
+    .map(input => input.value.trim())
+    .filter(Boolean);
+}
+
+function cableTypeOptions(selected = '') {
+  const selectedName = String(selected || '').trim();
+  const names = currentCableTypeNames();
+  if (selectedName && !names.includes(selectedName)) names.push(selectedName);
+  const options = names.length ? names : [''];
+  return options.map(name => `<option value="${escapeHtml(name)}" ${name === selectedName ? 'selected' : ''}>${escapeHtml(name || '-')}</option>`).join('');
+}
+
+function currentPartitionNames() {
+  const names = [...carouselPartitions];
+  document.querySelectorAll('#customVesselStore input[name$="[partition]"]').forEach(input => {
+    const name = input.value.trim().toLowerCase();
+    if (name && !names.includes(name)) names.push(name);
+  });
+  return names;
+}
+
+function refreshCablePartitionOptions() {
+  document.querySelectorAll('#cableRows select[name$="[partition]"]').forEach(select => {
+    const selected = select.value;
+    select.innerHTML = partitionOptions(selected);
+  });
+}
+
+function refreshCustomVesselOptions() {
+  const vesselSelect = document.getElementById('vessel');
+  const modeSelect = document.getElementById('carousel_mode');
+  const addOption = (select, value) => {
+    const trimmed = String(value || '').trim();
+    if (!select || !trimmed) return;
+    if (![...select.options].some(option => option.value === trimmed)) {
+      select.add(new Option(trimmed, trimmed));
+    }
+  };
+  document.querySelectorAll('#customVesselStore input[name$="[vessel_name]"]').forEach(input => addOption(vesselSelect, input.value));
+  document.querySelectorAll('#customVesselStore input[name$="[carousel_mode]"]').forEach(input => addOption(modeSelect, input.value));
+}
+
+function partitionOptions(selected = '') {
+  return currentPartitionNames().map(partition =>
+    `<option value="${escapeHtml(partition)}" ${partition === String(selected).toLowerCase() ? 'selected' : ''}>${escapeHtml(partition.charAt(0).toUpperCase() + partition.slice(1))}</option>`
+  ).join('');
+}
+
+function addStoredCustomVesselRow(values = {}) {
+  const store = document.getElementById('customVesselStore');
+  if (!store) return;
+  const index = nextRowIndex(store, 'custom_vessels');
+  const fields = {
+    vessel_name: values.vessel_name || '',
+    carousel_mode: values.carousel_mode || document.getElementById('carousel_mode')?.value || 'dual partition',
+    partition: values.partition || '',
+    partition_id: values.partition_id ?? '',
+    partition_od: values.partition_od ?? '',
+    partition_height: values.partition_height ?? '',
+    partition_max_height: values.partition_max_height ?? values.partition_height ?? '',
+    daf: values.daf ?? '1.365',
+    individual_capacity: values.individual_capacity ?? '',
+    carousel_total_capacity: values.carousel_total_capacity ?? values.individual_capacity ?? ''
+  };
+  Object.entries(fields).forEach(([key, value]) => {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = `custom_vessels[${index}][${key}]`;
+    input.value = value;
+    store.appendChild(input);
+  });
+  refreshCustomVesselOptions();
+  refreshCablePartitionOptions();
+}
+
+function customVesselPartitionsForMode(mode) {
+  const normalized = String(mode || '').toLowerCase();
+  if (normalized.includes('single')) return ['single'];
+  if (normalized.includes('triple')) return ['inner', 'middle', 'outer'];
+  return ['inner', 'outer'];
+}
+
+function renderCustomVesselEditorRows() {
+  const header = document.getElementById('customVesselHeader');
+  const tbody = document.getElementById('customVesselRows');
+  const mode = document.getElementById('customCarouselMode')?.value || '';
+  const hasIndividualCapacity = !String(mode).toLowerCase().includes('single');
+  if (!tbody || !header) return;
+  header.innerHTML = `
+    <th>Partition</th>
+    <th>ID [m]</th>
+    <th>OD [m]</th>
+    <th>Height [m]</th>
+    <th>DAF</th>
+    ${hasIndividualCapacity ? '<th>Individual Capacity [t]</th>' : ''}
+    <th>Shared Capacity [t]</th>
+  `;
+  const partitions = customVesselPartitionsForMode(mode);
+  tbody.innerHTML = partitions.map((partition, index) => `
+    <tr>
+      <td><input data-field="partition" type="text" value="${escapeHtml(partition)}" readonly></td>
+      <td><input data-field="partition_id" type="number" step="0.01"></td>
+      <td><input data-field="partition_od" type="number" step="0.01"></td>
+      <td><input data-field="partition_height" type="number" step="0.01"></td>
+      ${index === 0 ? `<td rowspan="${partitions.length}"><input data-field="daf" type="number" step="0.001" value="1"></td>` : ''}
+      ${hasIndividualCapacity ? '<td><input data-field="individual_capacity" type="number" step="0.1"></td>' : ''}
+      ${index === 0 ? `<td rowspan="${partitions.length}"><input data-field="carousel_total_capacity" type="number" step="0.1"></td>` : ''}
+    </tr>
+  `).join('');
+}
+
+function setVesselEditorOpen(isOpen) {
+  document.getElementById('customVesselEditor')?.classList.toggle('is-open', isOpen);
+  document.getElementById('vesselStandardForm')?.classList.toggle('is-hidden', isOpen);
+  document.getElementById('vesselDataView')?.classList.toggle('is-hidden', isOpen);
+  if (isOpen) renderCustomVesselEditorRows();
+}
+
+function openCustomVesselEditor() {
+  const vesselSelect = document.getElementById('vessel');
+  const modeSelect = document.getElementById('carousel_mode');
+  document.getElementById('customVesselName').value = '';
+  document.getElementById('customCarouselMode').value = modeSelect?.value || 'dual partition';
+  document.getElementById('customPartitionExtension').value = document.getElementById('partition_extension')?.value || 'no';
+  document.getElementById('customStowingFactor').value = document.getElementById('stowing_factor')?.value || '0,866';
+  if (vesselSelect) vesselSelect.dataset.previousValue = vesselSelect.value;
+  if (modeSelect) modeSelect.dataset.previousValue = modeSelect.value;
+  setVesselEditorOpen(true);
+}
+
+function saveCustomVesselFromEditor() {
+  const vesselName = document.getElementById('customVesselName')?.value.trim();
+  const mode = document.getElementById('customCarouselMode')?.value || '';
+  if (!vesselName) {
+    document.getElementById('customVesselName')?.focus();
+    return;
+  }
+  const sharedDaf = document.querySelector('#customVesselRows input[data-field="daf"]')?.value || '1';
+  const sharedCapacity = document.querySelector('#customVesselRows input[data-field="carousel_total_capacity"]')?.value || '';
+  document.querySelectorAll('#customVesselRows tr').forEach(row => {
+    const valueFor = field => row.querySelector(`[data-field="${field}"]`)?.value || '';
+    addStoredCustomVesselRow({
+      vessel_name: vesselName,
+      carousel_mode: mode,
+      partition: valueFor('partition'),
+      partition_id: valueFor('partition_id'),
+      partition_od: valueFor('partition_od'),
+      partition_height: valueFor('partition_height'),
+      partition_max_height: valueFor('partition_height'),
+      daf: sharedDaf,
+      individual_capacity: valueFor('individual_capacity'),
+      carousel_total_capacity: sharedCapacity
+    });
+  });
+  refreshCustomVesselOptions();
+  const vesselSelect = document.getElementById('vessel');
+  const modeSelect = document.getElementById('carousel_mode');
+  if (vesselSelect) vesselSelect.value = vesselName;
+  if (modeSelect) modeSelect.value = mode;
+  const partitionExtension = document.getElementById('partition_extension');
+  const customPartitionExtension = document.getElementById('customPartitionExtension');
+  if (partitionExtension && customPartitionExtension) partitionExtension.value = customPartitionExtension.value;
+  const stowingFactor = document.getElementById('stowing_factor');
+  const customStowingFactor = document.getElementById('customStowingFactor');
+  if (stowingFactor && customStowingFactor) stowingFactor.value = customStowingFactor.value;
+  setVesselEditorOpen(false);
+  submitCarouselForm('vessel');
+}
+
+function selectedTabRadio(tabName) {
+  return document.querySelector(`input.tab-toggle[value="${tabName}"]`);
+}
+
+function submitCarouselForm(tabName = 'results') {
+  const tab = selectedTabRadio(tabName);
+  if (tab) tab.checked = true;
+  flushAutosaveDraft(true);
+  const submitter = document.querySelector('.output-actions button.primary');
+  if (typeof form?.requestSubmit === 'function') form.requestSubmit(submitter);
+  else form?.submit();
+}
+
+function addCableTypeRow(values = {}) {
+  const tbody = document.querySelector('#cableTypeTable tbody');
+  if (!tbody) return;
+  const index = nextRowIndex(tbody, 'cable_types');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input name="cable_types[${index}][name]" type="text" value="${escapeHtml(values.name || '')}"></td>
+    <td><input name="cable_types[${index}][od]" type="number" step="0.1" value="${escapeHtml(values.od ?? '')}"></td>
+    <td><input name="cable_types[${index}][unit_weight]" type="number" step="0.1" value="${escapeHtml(values.unit_weight ?? '')}"></td>
+    <td><input name="cable_types[${index}][allowable]" type="number" step="0.1" value="${escapeHtml(values.allowable ?? '')}"></td>
+    <td><input name="cable_types[${index}][color]" type="color" value="${escapeHtml(values.color || '#008C72')}"></td>
+    <td><button class="remove-cable-type-row icon-button" type="button" aria-label="Remove cable type"><%- icon('remove') %></button></td>
+  `;
+  tbody.appendChild(tr);
+}
+
+function addCableRow(values = {}) {
+  const tbody = document.querySelector('#cableRows tbody');
+  if (!tbody) return;
+  const index = nextRowIndex(tbody, 'cables');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input name="cables[${index}][name]" type="text" value="${escapeHtml(values.name || '')}"></td>
+    <td><input name="cables[${index}][length]" type="number" step="0.1" value="${escapeHtml(values.length ?? '')}"></td>
+    <td><select name="cables[${index}][type]">${cableTypeOptions(values.type || '')}</select></td>
+    <td><select name="cables[${index}][partition]">${partitionOptions(values.partition || '')}</select></td>
+    <td><button class="remove-cable-row icon-button" type="button" aria-label="Remove cable row"><%- icon('remove') %></button></td>
+  `;
+  tbody.appendChild(tr);
+}
+
+function collectFields() {
+  return Array.from(new FormData(form).entries())
+    .filter(([name]) => name !== 'active_tab')
+    .map(([name, value]) => ({ name, value }));
+}
+
+function fieldValue(fields, name) {
+  return fields.find(field => field.name === name)?.value || '';
+}
+
+function draftTitle(fields) {
+  const parts = [fieldValue(fields, 'project_number').trim(), fieldValue(fields, 'project').trim()].filter(Boolean);
+  const revision = fieldValue(fields, 'revision').trim();
+  if (revision) parts.push(`Rev ${revision}`);
+  return parts.join(' - ') || 'Untitled calculation';
+}
+
+function reportFileTitle(fields) {
+  const parts = [
+    fieldValue(fields, 'project_number').trim(),
+    fieldValue(fields, 'project').trim(),
+    fieldValue(fields, 'revision').trim()
+  ].filter(Boolean);
+  return parts.join(' - ') || 'Carousel Stowage Calculation Report';
+}
+
+function safeFileBase(value, fallback) {
+  return String(value || fallback)
+    .trim()
+    .replace(/[<>:"/\\|?*\x00-\x1F]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .replace(/[. ]+$/g, '')
+    || fallback;
+}
+
+function csvEscape(value) {
+  return `"${String(value ?? '').replaceAll('"', '""')}"`;
+}
+
+function fieldsToCsv(fields) {
+  return [
+    ['Field', 'Value'].map(csvEscape).join(','),
+    ...fields.map(field => [field.name, field.value].map(csvEscape).join(','))
+  ].join('\n');
+}
+
+function parseCsvRows(text) {
+  const rows = [];
+  let row = [];
+  let cell = '';
+  let quoted = false;
+  for (let index = 0; index < text.length; index += 1) {
+    const char = text[index];
+    if (quoted) {
+      if (char === '"' && text[index + 1] === '"') {
+        cell += '"';
+        index += 1;
+      } else if (char === '"') {
+        quoted = false;
+      } else {
+        cell += char;
+      }
+    } else if (char === '"') {
+      quoted = true;
+    } else if (char === ',') {
+      row.push(cell);
+      cell = '';
+    } else if (char === '\n') {
+      row.push(cell);
+      rows.push(row);
+      row = [];
+      cell = '';
+    } else if (char !== '\r') {
+      cell += char;
+    }
+  }
+  row.push(cell);
+  rows.push(row);
+  return rows.filter(item => item.some(value => value !== ''));
+}
+
+function csvToFields(text) {
+  const rows = parseCsvRows(text);
+  if (!rows.length) return [];
+  const header = rows[0].map(value => String(value).trim().toLowerCase());
+  if (header[0] === 'field' && header[1] === 'value') {
+    return rows.slice(1)
+      .filter(row => row[0])
+      .map(row => ({ name: row[0], value: row[1] ?? '' }));
+  }
+  if (header[0] === 'parameter' && header[1] === 'value') {
+    return rows.slice(1)
+      .filter(row => row[0])
+      .map(row => ({ name: row[0], value: row[1] ?? '' }));
+  }
+  throw new Error('Project CSV must have Field and Value columns.');
+}
+
+function groupedRowsFromFields(fields, prefix) {
+  const rows = {};
+  fields.forEach(({ name, value }) => {
+    const match = name.match(new RegExp(`^${prefix}\\[(\\d+)\\]\\[(.+)\\]$`));
+    if (!match) return;
+    rows[match[1]] = rows[match[1]] || {};
+    rows[match[1]][match[2]] = value;
+  });
+  return Object.keys(rows).sort((a, b) => Number(a) - Number(b)).map(key => rows[key]);
+}
+
+function hasGroupedFields(fields, prefix) {
+  return fields.some(({ name }) => new RegExp(`^${prefix}\\[\\d+\\]\\[`).test(name));
+}
+
+const autosavedDraftStorageKey = 'carouselStowageAutosavedDraft';
+const savedCalculationsStorageKey = 'carouselStowageSavedCalculations';
+const maxSavedCalculations = 10;
+let autosaveTimer = null;
+let autosavePending = false;
+
+function storageGet(key) {
+  try {
+    const storage = globalThis.localStorage;
+    if (storage) return storage.getItem(key);
+  } catch {
+    // Fall through to cookie storage.
+  }
+  const cookie = document.cookie.split('; ').find(item => item.startsWith(`${encodeURIComponent(key)}=`));
+  return cookie ? decodeURIComponent(cookie.split('=').slice(1).join('=')) : null;
+}
+
+function storageSet(key, value) {
+  try {
+    const storage = globalThis.localStorage;
+    if (storage) {
+      storage.setItem(key, value);
+      return;
+    }
+  } catch {
+    // Fall through to cookie storage.
+  }
+  document.cookie = `${encodeURIComponent(key)}=${encodeURIComponent(value)}; max-age=2592000; path=/; samesite=lax`;
+}
+
+function storageRemove(key) {
+  try {
+    const storage = globalThis.localStorage;
+    if (storage) storage.removeItem(key);
+  } catch {
+    // Fall through to cookie storage.
+  }
+  document.cookie = `${encodeURIComponent(key)}=; max-age=0; path=/; samesite=lax`;
+}
+
+function readAutosavedDraft() {
+  try {
+    return JSON.parse(storageGet(autosavedDraftStorageKey) || 'null');
+  } catch {
+    return null;
+  }
+}
+
+function readSavedCalculations() {
+  try {
+    const saved = JSON.parse(storageGet(savedCalculationsStorageKey) || '[]');
+    return Array.isArray(saved) ? saved.filter(item => Array.isArray(item?.fields)) : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeSavedCalculations(savedCalculations) {
+  storageSet(savedCalculationsStorageKey, JSON.stringify(savedCalculations.slice(0, maxSavedCalculations)));
+}
+
+function calculationSignature(fields) {
+  return JSON.stringify(fields);
+}
+
+function calculationRecord(fields, status = 'draft', resultSnapshot = null) {
+  const record = {
+    schemaVersion: 2,
+    savedAt: new Date().toISOString(),
+    title: draftTitle(fields),
+    status,
+    fields
+  };
+  if (resultSnapshot) record.result = resultSnapshot;
+  return record;
+}
+
+function renderRecentQueries() {
+  const list = document.getElementById('recentQueriesList');
+  if (!list) return;
+  const draft = readAutosavedDraft();
+  const savedCalculations = readSavedCalculations();
+  const draftIsAlsoLatestSaved = draft?.fields && savedCalculations.some(saved =>
+    calculationSignature(saved.fields) === calculationSignature(draft.fields)
+  );
+  const items = [
+    ...savedCalculations.map((saved, index) => ({ ...saved, kind: 'saved', index })),
+    ...(draft?.fields && !draftIsAlsoLatestSaved ? [{ ...draft, kind: 'draft' }] : [])
+  ];
+
+  if (!items.length) {
+    list.innerHTML = '<div class="recent-query-empty">No saved calculations yet.</div>';
+    return;
+  }
+  list.innerHTML = items.map(item => `
+    <div class="recent-query-item" data-query-kind="${escapeHtml(item.kind)}" ${item.kind === 'saved' ? `data-saved-index="${item.index}"` : ''}>
+      <div>
+        <div class="recent-query-title">${item.kind === 'saved' ? 'Saved Calculation' : 'Autosaved Draft'}: ${escapeHtml(draftTitle(item.fields))}</div>
+        <div class="recent-query-meta">${escapeHtml(item.savedAt ? new Date(item.savedAt).toLocaleString() : '')}</div>
+      </div>
+      <div class="recent-query-actions">
+        <button class="secondary recent-query-load" type="button">Restore</button>
+        <button class="danger recent-query-delete" type="button">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function saveAutosavedDraft() {
+  if (!form) return;
+  const fields = collectFields();
+  try {
+    storageSet(autosavedDraftStorageKey, JSON.stringify(calculationRecord(fields, 'draft')));
+    autosavePending = false;
+    renderRecentQueries();
+  } catch {
+    // Browser storage can be unavailable in private or restricted sessions.
+  }
+}
+
+function scheduleAutosaveDraft() {
+  autosavePending = true;
+  window.clearTimeout(autosaveTimer);
+  autosaveTimer = window.setTimeout(saveAutosavedDraft, 350);
+}
+
+function flushAutosaveDraft(force = false) {
+  window.clearTimeout(autosaveTimer);
+  autosaveTimer = null;
+  if (force || autosavePending) saveAutosavedDraft();
+}
+
+function saveCalculationRun() {
+  if (!form) return;
+  const fields = collectFields();
+  try {
+    const record = calculationRecord(fields, 'submitted', carouselResultSnapshot);
+    const recordSignature = calculationSignature(fields);
+    const savedCalculations = readSavedCalculations()
+      .filter(saved => calculationSignature(saved.fields) !== recordSignature);
+    writeSavedCalculations([record, ...savedCalculations]);
+    storageSet(autosavedDraftStorageKey, JSON.stringify(record));
+    autosavePending = false;
+    renderRecentQueries();
+  } catch {
+    // Browser storage can be unavailable in private or restricted sessions.
+  }
+}
+
+function applyDraftFields(fields, options = {}) {
+  const preserveMissingGroups = Boolean(options.preserveMissingGroups);
+  const hasCustomVessels = hasGroupedFields(fields, 'custom_vessels');
+  const hasCableTypes = hasGroupedFields(fields, 'cable_types');
+  const hasCables = hasGroupedFields(fields, 'cables');
+
+  if (hasCustomVessels || !preserveMissingGroups) {
+    const store = document.getElementById('customVesselStore');
+    if (store) store.innerHTML = '';
+    groupedRowsFromFields(fields, 'custom_vessels').forEach(addStoredCustomVesselRow);
+  }
+
+  if (hasCableTypes || !preserveMissingGroups) {
+    document.querySelector('#cableTypeTable tbody').innerHTML = '';
+    groupedRowsFromFields(fields, 'cable_types').forEach(addCableTypeRow);
+  }
+
+  if (hasCables || !preserveMissingGroups) {
+    document.querySelector('#cableRows tbody').innerHTML = '';
+    groupedRowsFromFields(fields, 'cables').forEach(addCableRow);
+  }
+
+  fields.forEach(({ name, value }) => {
+    if (name.startsWith('custom_vessels[') || name.startsWith('cable_types[') || name.startsWith('cables[')) return;
+    const field = form.elements[name];
+    if (field && typeof field.value !== 'undefined') field.value = value;
+  });
+  refreshCablePartitionOptions();
+  scheduleAutosaveDraft();
+}
+
+function clearAutosavedDraft() {
+  storageRemove(autosavedDraftStorageKey);
+  storageRemove(savedCalculationsStorageKey);
+  renderRecentQueries();
+}
+
+document.getElementById('addCableTypeRow')?.addEventListener('click', () => {
+  addCableTypeRow();
+  scheduleAutosaveDraft();
+});
+document.getElementById('addVesselData')?.addEventListener('click', openCustomVesselEditor);
+document.getElementById('customCarouselMode')?.addEventListener('change', renderCustomVesselEditorRows);
+document.getElementById('saveCustomVessel')?.addEventListener('click', saveCustomVesselFromEditor);
+document.getElementById('cancelCustomVessel')?.addEventListener('click', () => setVesselEditorOpen(false));
+['vessel', 'carousel_mode', 'partition_extension'].forEach(id => {
+  document.getElementById(id)?.addEventListener('change', () => submitCarouselForm('vessel'));
+});
+document.getElementById('stowing_factor')?.addEventListener('change', () => submitCarouselForm('vessel'));
+document.getElementById('addCableRow')?.addEventListener('click', () => {
+  addCableRow();
+  scheduleAutosaveDraft();
+});
+document.getElementById('clearRecentQueries')?.addEventListener('click', clearAutosavedDraft);
+document.addEventListener('click', event => {
+  if (event.target.closest('.remove-cable-type-row')) {
+    event.target.closest('tr')?.remove();
+    scheduleAutosaveDraft();
+  }
+  if (event.target.closest('.remove-cable-row')) {
+    event.target.closest('tr')?.remove();
+    scheduleAutosaveDraft();
+  }
+  if (event.target.closest('.recent-query-load')) {
+    const item = event.target.closest('.recent-query-item');
+    const savedIndex = Number(item?.dataset.savedIndex);
+    const saved = item?.dataset.queryKind === 'saved' ? readSavedCalculations()[savedIndex] : null;
+    const draft = item?.dataset.queryKind === 'draft' ? readAutosavedDraft() : null;
+    const calculation = saved || draft;
+    if (calculation?.fields) applyDraftFields(calculation.fields, { preserveMissingGroups: !calculation.schemaVersion });
+    if (item?.dataset.queryKind === 'saved') {
+      window.setTimeout(() => form?.requestSubmit(document.querySelector('.output-actions button.primary')), 0);
+    } else {
+      document.getElementById('tab-project')?.click();
+    }
+  }
+  if (event.target.closest('.recent-query-delete')) {
+    const item = event.target.closest('.recent-query-item');
+    if (item?.dataset.queryKind === 'saved') {
+      const savedIndex = Number(item.dataset.savedIndex);
+      const savedCalculations = readSavedCalculations().filter((_, index) => index !== savedIndex);
+      writeSavedCalculations(savedCalculations);
+      renderRecentQueries();
+    }
+    if (item?.dataset.queryKind === 'draft') {
+      storageRemove(autosavedDraftStorageKey);
+      renderRecentQueries();
+    }
+  }
+});
+document.addEventListener('input', event => {
+  if (event.target.matches('#cableTypeTable input[type="color"]')) refreshCableColors();
+  if (event.target.matches('#customVesselStore input[name$="[partition]"]')) refreshCablePartitionOptions();
+  if (event.target.matches('#customVesselStore input[name$="[vessel_name]"], #customVesselStore input[name$="[carousel_mode]"]')) refreshCustomVesselOptions();
+});
+form?.addEventListener('change', event => {
+  if (event.target.matches('#cableRows select[name$="[type]"]')) refreshCableColors();
+});
+form?.addEventListener('input', scheduleAutosaveDraft);
+form?.addEventListener('change', scheduleAutosaveDraft);
+form?.addEventListener('submit', () => flushAutosaveDraft(true));
+window.addEventListener('pagehide', () => flushAutosaveDraft(false));
+renderRecentQueries();
+if (carouselSubmitted) saveCalculationRun();
+
+document.getElementById('saveProject')?.addEventListener('click', () => {
+  const link = document.createElement('a');
+  const fields = collectFields();
+  link.href = URL.createObjectURL(new Blob([fieldsToCsv(fields)], { type: 'text/csv' }));
+  link.download = `${safeFileBase(reportFileTitle(fields), 'carousel_stowage_project')}.csv`;
+  link.click();
+  URL.revokeObjectURL(link.href);
+});
+document.getElementById('loadProject')?.addEventListener('click', () => document.getElementById('loadProjectFile')?.click());
+function createPdfReport() {
+  const reportTitle = reportFileTitle(collectFields());
+  const sourceLogo = document.querySelector('.brand-logo');
+  const reportLogo = document.getElementById('pdfReportLogo');
+  if (sourceLogo instanceof HTMLImageElement && reportLogo instanceof HTMLImageElement) {
+    reportLogo.src = sourceLogo.src;
+  }
+  const report = document.querySelector('.pdf-report');
+  const reportWindow = window.open('', '_blank');
+  if (!reportWindow) {
+    alert('Please allow pop-ups to generate the PDF report.');
+    return;
+  }
+  reportWindow.document.write(`
+    <!doctype html>
+    <html>
+      <head>
+        <title>${escapeHtml(reportTitle)}</title>
+        <link rel="stylesheet" href="/nseastyle.css">
+        <link rel="stylesheet" href="/carousel.css">
+        <style>
+          body { margin: 0; background: #d9d9d9; }
+          .pdf-report { display: block !important; }
+          .pdf-report-sheet {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto;
+            padding: 10mm;
+            background: #FFFFFF;
+            box-sizing: border-box;
+            print-color-adjust: exact;
+            -webkit-print-color-adjust: exact;
+          }
+          @page { size: A4 portrait; margin: 0; }
+          @media print {
+            body { margin: 0; background: #FFFFFF; }
+            .pdf-report-sheet { margin: 0; min-height: auto; }
+          }
+        </style>
+      </head>
+      <body>
+        ${report ? report.outerHTML : '<p>Report is not available. Run the calculation first.</p>'}
+        <script>window.addEventListener('load', () => window.print());<\/script>
+      </body>
+    </html>
+  `);
+  reportWindow.document.close();
+}
+
+document.getElementById('createPdf')?.addEventListener('click', createPdfReport);
+document.getElementById('loadProjectFile')?.addEventListener('change', event => {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const text = String(reader.result);
+      if (file.name.toLowerCase().endsWith('.json') || text.trim().startsWith('{')) {
+        const data = JSON.parse(text);
+        if (Array.isArray(data.fields)) {
+          applyDraftFields(data.fields, { preserveMissingGroups: !data.schemaVersion });
+        } else {
+          const fields = [];
+          Object.entries(data).forEach(([key, value]) => {
+            if (typeof value !== 'object') fields.push({ name: key, value });
+          });
+          (data.cable_types || []).forEach((type, index) => {
+            Object.entries(type).forEach(([key, value]) => fields.push({ name: `cable_types[${index}][${key}]`, value }));
+          });
+          (data.cables || []).forEach((cable, index) => {
+            Object.entries(cable).forEach(([key, value]) => fields.push({ name: `cables[${index}][${key}]`, value }));
+          });
+          (data.custom_vessels || []).forEach((vessel, index) => {
+            Object.entries(vessel).forEach(([key, value]) => fields.push({ name: `custom_vessels[${index}][${key}]`, value }));
+          });
+          applyDraftFields(fields);
+        }
+      } else {
+        applyDraftFields(csvToFields(text));
+      }
+      form.submit();
+    } catch (error) {
+      alert('Unable to load carousel project file.');
+    } finally {
+      event.target.value = '';
+    }
+  };
+  reader.readAsText(file);
+});
+</script>
+</body>
+</html>

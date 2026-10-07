@@ -1,0 +1,225 @@
+/* Dashboard-only layout. Shared calculator chrome stays in nseastyle.css. */
+
+body {
+  background: #F1F1F1;
+}
+
+header {
+  background: #FFFFFF;
+  border-top: 6px solid #D7D7D7;
+  border-bottom: 1px solid #D7DBE5;
+}
+
+.brand-row {
+  max-width: 1360px;
+  min-height: 124px;
+  grid-template-columns: minmax(520px, 1fr) minmax(520px, 700px);
+}
+
+.brand-left,
+.brand-title {
+  padding: 0;
+}
+
+.brand-left {
+  gap: 26px;
+  padding-left: 36px;
+}
+
+.brand-title {
+  padding-left: 50px;
+  padding-right: 44px;
+}
+
+.brand-logo-wrap {
+  width: 40px;
+  height: 74px;
+}
+
+.brand-logo-wrap .brand-logo {
+  width: 39px;
+  height: 74px;
+}
+
+.project-label {
+  font-size: 2rem;
+  letter-spacing: .045em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+header h1 {
+  margin-bottom: 6px;
+  font-size: 1.9rem;
+  letter-spacing: 0;
+}
+
+header p {
+  font-size: .86rem;
+}
+
+main {
+  display: block;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 26px 0 56px;
+}
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.tool-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 254px;
+  padding: 26px 24px 24px;
+  overflow: hidden;
+  color: inherit;
+  text-decoration: none;
+  background: #FFFFFF;
+  border: 1px solid #C9CCD8;
+  border-radius: 0;
+  box-shadow: none;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.tool-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 5px;
+  background: var(--brand-yellow);
+}
+
+.tool-card:hover {
+  border-color: var(--brand-blue);
+  box-shadow: 0 8px 20px rgba(41, 55, 138, .09);
+}
+
+.tool-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.tool-tag {
+  padding-top: 1px;
+  color: #6D7079;
+  font-size: .7rem;
+  font-weight: 900;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.status {
+  flex: 0 0 auto;
+  padding: 7px 10px;
+  color: #1B6E3D;
+  font-size: .75rem;
+  font-weight: 900;
+  line-height: 1;
+  background: #EAF4ED;
+}
+
+.tool-card h3 {
+  max-width: 360px;
+  margin: 0 0 5px;
+  color: var(--brand-blue);
+  font-size: 1.43rem;
+  font-weight: 900;
+  line-height: 1.08;
+}
+
+.tool-subtitle {
+  margin: 0 0 17px;
+  color: var(--brand-blue);
+  font-size: .95rem;
+  font-weight: 900;
+  line-height: 1.18;
+}
+
+.tool-description {
+  max-width: 360px;
+  margin: 0;
+  color: #555862;
+  font-size: .96rem;
+  line-height: 1.45;
+}
+
+.tool-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 26px;
+  color: var(--brand-blue);
+  font-size: 1rem;
+  font-weight: 900;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+@media (max-width: 1400px) {
+  .brand-row,
+  main {
+    margin-right: 64px;
+    margin-left: 64px;
+  }
+}
+
+@media (max-width: 1180px) {
+  .brand-row {
+    grid-template-columns: 1fr;
+    margin-right: 24px;
+    margin-left: 24px;
+  }
+
+  .brand-left,
+  .brand-title {
+    min-height: 112px;
+    padding-right: 32px;
+    padding-left: 32px;
+  }
+
+  main {
+    margin-right: 24px;
+    margin-left: 24px;
+  }
+
+  .tools-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .brand-row,
+  main {
+    margin-right: 14px;
+    margin-left: 14px;
+  }
+
+  .brand-left {
+    gap: 18px;
+  }
+
+  .project-label {
+    white-space: normal;
+    font-size: 1.55rem;
+  }
+
+  header h1 {
+    font-size: 1.55rem;
+  }
+
+  .tools-grid {
+    grid-template-columns: 1fr;
+  }
+}

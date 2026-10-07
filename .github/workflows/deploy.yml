@@ -1,0 +1,81 @@
+name: Deploy
+
+# Merging to main deploys to engineering.n-sea.nl. Nothing else does.
+#
+# The runner is the same self-hosted runner cip-platform uses, and it deploys into
+# THIS directory — /home/nsea/apps/engineering-tools is both the git working tree and
+# what docker compose builds from. That is why .gitignore must keep pdf/ untracked:
+# the reset below would otherwise delete generated reports.
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    # Two deploys must never interleave in the shared working tree — both reset it.
+    concurrency:
+      group: deploy-engineering-tools
+      cancel-in-progress: false
+    steps:
+      - name: Record the currently deployed commit
+        id: prev
+        run: |
+          set -euo pipefail
+          cd /home/nsea/apps/engineering-tools
+          # Captured BEFORE the reset, so it is the commit actually serving traffic.
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "Currently deployed: $(git rev-parse --short HEAD) — $(git log -1 --format=%s)"
+
+      - name: Deploy
+        run: |
+          set -euo pipefail
+          cd /home/nsea/apps/engineering-tools
+          git fetch origin
+          git checkout main
+          git reset --hard origin/main
+          # `up -d --build` aborts and leaves the running container in place if the
+          # image build fails, so a broken build never reaches a live container.
+          sg docker -c "docker compose up -d --build"
+
+      - name: Verify, and roll back if it is broken
+        env:
+          PREV: ${{ steps.prev.outputs.sha }}
+        run: |
+          set -uo pipefail
+          cd /home/nsea/apps/engineering-tools
+
+          # Checked from inside the compose network, so this passes or fails on the
+          # application rather than on whether Cloudflare has caught up yet.
+          #
+          # Expect 302, not 200: every route sits behind the Entra gate, so a redirect
+          # to login is the healthy answer. A 200 here would mean the gate is missing.
+          verify() {
+            local i code
+            for i in $(seq 1 20); do
+              code=$(sg docker -c "docker run --rm --network engineering-tools_engtools \
+                curlimages/curl:latest -s -o /dev/null -w '%{http_code}' --max-time 10 \
+                http://engtools-app:3000/" 2>/dev/null)
+              [ "$code" = "302" ] && { echo "verified: gateway serving, $code to Entra"; return 0; }
+              sleep 3
+            done
+            echo "app did not answer with 302 (last: ${code:-none})"
+            return 1
+          }
+
+          if verify; then
+            echo "Deploy of $(git rev-parse --short HEAD) verified."
+            exit 0
+          fi
+
+          echo "::error::Deploy verification failed — rolling back to ${PREV:0:7}"
+          git reset --hard "$PREV"
+          sg docker -c "docker compose up -d --build"
+          if verify; then
+            echo "::error::Rolled back to ${PREV:0:7} and it is serving. The commit just" \
+                 "deployed is broken — investigate before trying again."
+          else
+            echo "::error::ROLLBACK ALSO FAILED. engineering.n-sea.nl is down." \
+                 "Check: docker compose -f /home/nsea/apps/engineering-tools/docker-compose.yml logs app"
+          fi
+          exit 1
