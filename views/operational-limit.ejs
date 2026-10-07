@@ -88,7 +88,7 @@
 </footer>
 
 <script>
-window.OPERATION_LIMIT_DATA = <%- operationLimitData %>;
+window.OPERATION_LIMIT_DATA = <%- operationLimitData.replace(/</g, '\\u003c') %>;
 </script>
 <script src="operational-limit.js?v=<%= scriptVersion %>"></script>
 </body>
